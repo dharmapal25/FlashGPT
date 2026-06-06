@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import api, { setAccessToken as setApiAccessToken } from './api';
+import { Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
+import api from './api';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
-import { Bot, UserRound, Copy, Check, Edit3 } from 'lucide-react';
+import { Bot, UserRound, Copy, Check, Edit3, Plus, PlusIcon, Delete, DeleteIcon, LucideDelete } from 'lucide-react';
 import 'highlight.js/styles/github-dark.css';
 import './styles.css';
 import Login from './Login';
@@ -20,23 +20,13 @@ const App = () => {
   const [currentChatId, setCurrentChatId] = useState(null);
   const [currentChatTitle, setCurrentChatTitle] = useState('New Chat');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   // Check if user is logged in on mount
   useEffect(() => {
-    // If the backend redirected with an accessToken in the URL fragment, use it.
-    const hash = window.location.hash;
-    if (hash && hash.includes('accessToken=')) {
-      const params = new URLSearchParams(hash.replace('#', ''));
-      const token = params.get('accessToken');
-      if (token) {
-        setApiAccessToken(token);
-        // remove token from URL for cleanliness
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
-    }
-
     checkAuthStatus();
   }, []);
 
@@ -47,23 +37,39 @@ const App = () => {
     }
   }, [user]);
 
+  // respond to route params: /chat/new, /chat/:id and /chat/:id/delete
+  const params = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const routeId = params.id;
+    const action = params.action;
+    if (!user) return; // wait until authenticated
+
+    // support explicit /chat/new route (no :id param)
+    if (location.pathname === '/chat/new' || routeId === 'new') {
+      newChat();
+      return;
+    }
+
+    if (routeId && action === 'delete') {
+      // open confirmation modal instead of immediate delete
+      setDeleteTargetId(routeId);
+      setShowDeleteConfirm(true);
+      return;
+    }
+
+    if (routeId) {
+      loadChat(routeId);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id, params.action, user]);
+
   const checkAuthStatus = async () => {
     try {
       const res = await api.get('/auth/profile', { timeout: 8000 });
-      if (res.data.user) {
-        setUser(res.data.user);
-      }
-      // backend may return an accessToken; if not, try refresh endpoint
-      if (res.data.accessToken) {
-        setApiAccessToken(res.data.accessToken);
-      } else {
-        try {
-          const r = await api.post('/auth/refresh-token');
-          if (r.data.accessToken) setApiAccessToken(r.data.accessToken);
-        } catch (e) {
-          // no token available
-        }
-      }
+      if (res.data.user) setUser(res.data.user);
     } catch (err) {
       console.error('Auth check failed:', err?.response?.data || err.message || err);
       setUser(null);
@@ -125,6 +131,27 @@ const App = () => {
     }
   };
 
+  const confirmDelete = async () => {
+    if (!deleteTargetId) return;
+    try {
+      await deleteChat(deleteTargetId);
+      setShowDeleteConfirm(false);
+      setDeleteTargetId(null);
+      navigate('/chat/new');
+    } catch (err) {
+      console.error('Confirm delete failed', err);
+      setShowDeleteConfirm(false);
+      setDeleteTargetId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setDeleteTargetId(null);
+    // return to a safe route
+    navigate('/chat/new');
+  };
+
   const handleChat = async () => {
     if (!input.trim()) return;
 
@@ -166,13 +193,14 @@ const App = () => {
   const handleLogout = async () => {
     try {
       await api.get('/auth/logout');
-      setApiAccessToken(null);
+      // session cookie cleared on server; no client tokens to clear
       setUser(null);
       setMessages([]);
       setChats([]);
       setInput('');
       setError('');
       setCurrentChatId(null);
+      // tokens are kept in memory; nothing to remove from localStorage
     } catch (err) {
       console.error('Logout error:', err);
     }
@@ -205,8 +233,9 @@ const App = () => {
     <div className="appShell">
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebarTop">
-          <button className="newChatBtn" onClick={newChat}>
-            ➕ New Chat
+          <button className="newChatBtn"
+           onClick={() => navigate('/chat/new')}>
+            <PlusIcon /> New Chat
           </button>
         </div>
 
@@ -222,16 +251,20 @@ const App = () => {
               >
                 <button 
                   className="chatItemBtn"
-                  onClick={() => loadChat(chat._id)}
+                  onClick={() => navigate(`/chat/${chat._id}`)}
                 >
                   {chat.title}
                 </button>
                 <button 
                   className="deleteBtn"
-                  onClick={() => deleteChat(chat._id)}
+                  onClick={() => {
+                    setDeleteTargetId(chat._id);
+                    setShowDeleteConfirm(true);
+                    navigate(`/chat/${chat._id}/delete`);
+                  }}
                   title="Delete chat"
                 >
-                  🗑️
+                  <LucideDelete />
                 </button>
               </div>
             ))
@@ -321,6 +354,18 @@ const App = () => {
           </div>
         </div>
       </div>
+      {showDeleteConfirm && (
+        <div className="modalOverlay">
+          <div className="modal">
+            <h3>Delete chat?</h3>
+            <p>Are you sure you want to permanently delete this chat? This action cannot be undone.</p>
+            <div className="modalActions">
+              <button className="cancelBtn" onClick={cancelDelete}>Cancel</button>
+              <button className="confirmBtn" onClick={confirmDelete}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

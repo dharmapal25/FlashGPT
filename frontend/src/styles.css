@@ -1108,6 +1108,36 @@ button {
   color: var(--muted);
 }
 
+/* Delete confirmation modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal {
+  width: 420px;
+  max-width: calc(100% - 40px);
+  background: var(--panel);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+.modal h3 {
+  margin: 0 0 8px;
+}
+.modal p { margin: 0 0 18px; color: var(--muted); }
+.modalActions { display:flex; gap:10px; justify-content:flex-end; }
+.modalActions .cancelBtn {
+  background: transparent; border: 1px solid var(--line); padding:8px 12px; border-radius:8px; cursor:pointer;
+}
+.modalActions .confirmBtn {
+  background: #ff6b6b; color: white; border: none; padding:8px 12px; border-radius:8px; cursor:pointer;
+}
+
 /* Chat Header with User Info */
 .chatHeader {
   display: flex;

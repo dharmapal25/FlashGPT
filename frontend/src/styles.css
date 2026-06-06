@@ -691,29 +691,188 @@ button {
 
 /* Chat App Specific Styles */
 .appShell {
-  grid-template-columns: 1fr;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebarTop {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.newChatBtn {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.newChatBtn:hover {
+  background: var(--accent-strong);
+}
+
+.chatList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+
+.chatsLabel {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.noChats {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.chatItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.chatItem:hover {
+  background: var(--panel-soft);
+}
+
+.chatItem.active {
+  background: var(--accent);
+}
+
+.chatItemBtn {
+  flex: 1;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 14px;
+  padding: 4px 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chatItem.active .chatItemBtn {
+  color: white;
+  font-weight: 600;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.chatItem:hover .deleteBtn {
+  opacity: 1;
+}
+
+.deleteBtn:hover {
+  transform: scale(1.2);
+}
+
+.sidebarFooter {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.userProfile img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userProfile span {
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .main {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  min-width: 0;
 }
 
 .chatContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 840px;
-  margin: 0 auto;
-  width: 100%;
 }
 
-.chatContainer h1 {
-  padding: 20px;
-  margin: 0;
-  text-align: center;
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.chatHeader h1 {
+  margin: 0;
+  font-size: 20px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .messagesBox {
@@ -736,6 +895,18 @@ button {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message.user {
@@ -814,6 +985,54 @@ button {
   border: 1px solid #fcc;
   border-radius: 8px;
   color: #c33;
+}
+
+.logoutBtn {
+  width: 100%;
+  padding: 8px 16px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.logoutBtn:hover {
+  background: #ff5252;
+}
+
+@media (max-width: 768px) {
+  .appShell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  .message.user p,
+  .message.assistant p {
+    max-width: 85%;
+  }
 }
 
 /* Login Page Styles */

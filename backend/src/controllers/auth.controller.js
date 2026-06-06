@@ -27,19 +27,22 @@ exports.userProfile = async (req, res) => {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
+        const email = (req.user.emails && req.user.emails[0] && req.user.emails[0].value) || req.user._json?.email || '';
+        const profilePicture = (req.user.photos && req.user.photos[0] && req.user.photos[0].value) || req.user._json?.picture || '';
+
         const user = await User.findOneAndUpdate(
             { googleId: req.user.id },
             {
                 $set: {
                     googleId: req.user.id,
-                    displayName: req.user.displayName,
-                    email: req.user.emails[0].value,
-                    profilePicture: req.user.photos[0]?.value || '',
+                    displayName: req.user.displayName || '',
+                    email,
+                    profilePicture,
                 }
             },
             {
                 upsert: true, // create if not exists
-                new: true  // return the updated document
+                returnDocument: 'after'
             }
         );
 

@@ -1,5 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const User = require('../src/models/users.model');
 
 // Google Strategy
 passport.use(new GoogleStrategy({
@@ -7,22 +8,43 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL,
   skipUserProfile: false
-}, (accessToken, refreshToken, profile, done) => {
-  console.log('✅ Google Auth Success!');
-  done(null, profile);
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    console.log('✅ Google Auth Success!');
+    console.log('Google Profile:', profile);
 
-  console.log('Google Profile:', profile);
+    // Find or create user in database
+    const user = await User.findOneAndUpdate(
+      { googleId: profile.id },
+      {
+        $set: {
+          googleId: profile.id,
+          displayName: profile.displayName,
+          email: profile.emails[0].value,
+          profilePicture: profile.photos[0]?.value || '',
+        }
+      },
+      { upsert: true, new: true, returnDocument: 'after' }
+    );
 
-
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
 }));
 
-// Session handling
+// Session handling - serialize the MongoDB user object
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user._id);
 });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
 });
 
 module.exports = passport;

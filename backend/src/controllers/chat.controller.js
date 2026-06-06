@@ -24,7 +24,7 @@ exports.chat = async (req, res) => {
     }
 
     const completion = await groq.chat.completions.create({
-      model: "mixtral-8x7b-32768",
+      model: process.env.AI_MODEL,
       messages: [
         {
           role: "user",
@@ -34,6 +34,9 @@ exports.chat = async (req, res) => {
     });
 
     const aiResponse = completion.choices[0]?.message?.content || "No response";
+
+    // Get the correct userId
+    const userId = req.user._id || req.user.id;
 
     // Save messages to database
     let chat;
@@ -54,7 +57,7 @@ exports.chat = async (req, res) => {
     } else {
       // Create new chat
       chat = await Chat.create({
-        userId: req.user.id,
+        userId: userId,
         title: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
         messages: [
           { role: 'user', content: message },
@@ -70,7 +73,6 @@ exports.chat = async (req, res) => {
     });
   } catch (error) {
     console.error("Groq API Error:", error);
-
     res.status(500).json({
       success: false,
       message: "Something went wrong with AI chat",
@@ -87,7 +89,8 @@ exports.getChats = async (req, res) => {
       });
     }
 
-    const chats = await Chat.find({ userId: req.user.id })
+    const userId = req.user._id || req.user.id;
+    const chats = await Chat.find({ userId: userId })
       .select('_id title bookmark createdAt')
       .sort({ createdAt: -1 });
 
@@ -114,10 +117,11 @@ exports.getChat = async (req, res) => {
     }
 
     const { chatId } = req.params;
+    const userId = req.user._id || req.user.id;
 
     const chat = await Chat.findOne({
       _id: chatId,
-      userId: req.user.id,
+      userId: userId,
     });
 
     if (!chat) {
@@ -150,10 +154,11 @@ exports.deleteChat = async (req, res) => {
     }
 
     const { chatId } = req.params;
+    const userId = req.user._id || req.user.id;
 
     const chat = await Chat.findOneAndDelete({
       _id: chatId,
-      userId: req.user.id,
+      userId: userId,
     });
 
     if (!chat) {
@@ -187,9 +192,10 @@ exports.updateChatTitle = async (req, res) => {
 
     const { chatId } = req.params;
     const { title } = req.body;
+    const userId = req.user._id || req.user.id;
 
     const chat = await Chat.findOneAndUpdate(
-      { _id: chatId, userId: req.user.id },
+      { _id: chatId, userId: userId },
       { title },
       { new: true }
     );
@@ -224,10 +230,11 @@ exports.toggleBookmark = async (req, res) => {
     }
 
     const { chatId } = req.params;
+    const userId = req.user._id || req.user.id;
 
     const chat = await Chat.findOne({
       _id: chatId,
-      userId: req.user.id,
+      userId: userId,
     });
 
     if (!chat) {

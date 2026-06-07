@@ -1,8 +1,8 @@
-const Groq = require("groq-sdk");
+const { GoogleGenAI } = require("@google/genai");
 const Chat = require("../models/chat.model");
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+const ai = new GoogleGenAI({
+  apiKey: process.env.GOOGLE_API_KEY,
 });
 
 exports.chat = async (req, res) => {
@@ -10,7 +10,7 @@ exports.chat = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'User not authenticated',
+        message: "User not authenticated",
       });
     }
 
@@ -19,50 +19,79 @@ exports.chat = async (req, res) => {
     if (!message) {
       return res.status(400).json({
         success: false,
-        message: 'Message is required',
+        message: "Message is required",
       });
     }
 
-    const completion = await groq.chat.completions.create({
+    let history = "";
+
+    if (chatId) {
+      const existingChat = await Chat.findById(chatId);
+
+      if (existingChat) {
+        history = existingChat.messages
+          .map((msg) => `${msg.role}: ${msg.content}`)
+          .join("\n");
+      }
+    }
+
+    const prompt = `
+Previous Conversation:
+
+${history}
+
+Current User Message:
+
+${message}
+`;
+
+    const response = await ai.models.generateContent({
       model: process.env.AI_MODEL,
-      messages: [
-        {
-          role: "user",
-          content: message,
-        },
-      ],
+      contents: prompt,
     });
 
-    const aiResponse = completion.choices[0]?.message?.content || "No response";
+    const aiResponse = response.text || "No response";
 
-    // Get the correct userId
     const userId = req.user._id || req.user.id;
 
-    // Save messages to database
     let chat;
+
     if (chatId) {
-      // Update existing chat
       chat = await Chat.findByIdAndUpdate(
         chatId,
         {
           $push: {
             messages: [
-              { role: 'user', content: message },
-              { role: 'assistant', content: aiResponse }
-            ]
-          }
+              {
+                role: "user",
+                content: message,
+              },
+              {
+                role: "assistant",
+                content: aiResponse,
+              },
+            ],
+          },
         },
         { new: true }
       );
     } else {
-      // Create new chat
       chat = await Chat.create({
-        userId: userId,
-        title: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
+        userId,
+        title:
+          message.substring(0, 50) +
+          (message.length > 50 ? "..." : ""),
+
         messages: [
-          { role: 'user', content: message },
-          { role: 'assistant', content: aiResponse }
-        ]
+          {
+            role: "user",
+            content: message,
+          },
+          {
+            role: "assistant",
+            content: aiResponse,
+          },
+        ],
       });
     }
 
@@ -72,10 +101,12 @@ exports.chat = async (req, res) => {
       chatId: chat._id,
     });
   } catch (error) {
-    console.error("Groq API Error:", error);
+    console.error("Gemini Error:", error);
+
     res.status(500).json({
       success: false,
       message: "Something went wrong with AI chat",
+      error: error.message,
     });
   }
 };

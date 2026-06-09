@@ -5,6 +5,7 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
+
 exports.chat = async (req, res) => {
   try {
     if (!req.user) {

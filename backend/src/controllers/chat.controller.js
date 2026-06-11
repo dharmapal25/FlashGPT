@@ -36,15 +36,15 @@ exports.chat = async (req, res) => {
       }
     }
 
-    const prompt = `
-Previous Conversation:
-
-${history}
-
-Current User Message:
-
-${message}
-`;
+    // previous conversation + current user message -> prompt for AI
+    
+    const prompt =
+    `Previous Conversation:
+    ${history}
+    Current User Message:
+    ${message}`;
+    
+    // console.log("AI Prompt:", prompt);
 
     const response = await ai.models.generateContent({
       model: process.env.AI_MODEL,
@@ -74,7 +74,7 @@ ${message}
             ],
           },
         },
-        { new: true }
+        { new: true } // return the updated chat document
       );
     } else {
       chat = await Chat.create({

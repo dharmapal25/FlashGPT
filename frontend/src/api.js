@@ -7,12 +7,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// if session inside available then hit into /chat/new else /login
-// api.interceptors.response.use((response) => {
-  
-// })
-
-
 
 
 

@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo').default;
 const passport = require('passport');
 
 const connectDB = require('./src/config/db');
@@ -15,12 +15,23 @@ const chatRouter = require('./src/Routers/chat.route');
 const app = express();
 
 connectDB();
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const allowedOrigins = [
+  frontendUrl,
+  "https://flashgpt-ai.vercel.app"
+];
+// const isSecureCookie = frontendUrl.startsWith("https://");
 
-// IMPORTANT FOR RENDER
+// Needed when the API is behind Render/another proxy and uses secure cookies.
 app.set("trust proxy", 1);
 
 app.use(cors({
-  origin: "https://flashgpt-ai.vercel.app",
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"]
 }));
@@ -43,13 +54,8 @@ app.use(session({
 
   cookie: {
     httpOnly: true,
-
-    // Production Render
     secure: true,
-
-    // VERY IMPORTANT
     sameSite: "none",
-
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
 }));
@@ -59,6 +65,13 @@ app.use(passport.session());
 
 app.use('/auth', authRouter);
 app.use('/api', chatRouter);
+
+app.use((req, res, next) => {
+  console.log("COOKIE HEADER:", req.headers.cookie);
+  console.log("SESSION ID:", req.sessionID);
+  console.log("PASSPORT:", req.session.passport);
+  next();
+});
 
 app.get('/', (req, res) => {
   res.send('Backend Running');

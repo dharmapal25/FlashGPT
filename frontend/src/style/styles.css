@@ -4,7 +4,7 @@
 ═══════════════════════════════════════════════════ */
 
 /* ── Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ── Token system (dark default) ── */
 :root,
@@ -31,7 +31,7 @@
   --radius:      10px;
   --radius-sm:   6px;
   --shadow:      0 4px 24px rgba(0,0,0,.45);
-  --font-ui:     'Inter', system-ui, sans-serif;
+  --font-ui:     'Share Tech', 'Inter', system-ui, sans-serif;
   --font-mono:   'JetBrains Mono', 'Fira Code', monospace;
 }
 

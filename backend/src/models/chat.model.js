@@ -40,6 +40,12 @@ const chatSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// TTL index to automatically delete chats after 30 days of inactivity
+chatSchema.index(
+  { updatedAt: 1 },
+  { expireAfterSeconds: 30 * 24 * 60 * 60 }
+);
+
 const Chat = mongoose.model('Chat', chatSchema);
 
 module.exports = Chat;

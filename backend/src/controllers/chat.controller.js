@@ -7,6 +7,34 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
+const parseAiJson = (rawText) => {
+  const fallback = {
+    save: false,
+    memory: "",
+    answer: rawText || "I could not generate a response.",
+    nextQuestion: ""
+  };
+
+  if (!rawText) return fallback;
+
+  const cleaned = rawText
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/i, "")
+    .trim();
+
+  try {
+    return { ...fallback, ...JSON.parse(cleaned) };
+  } catch {
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return fallback;
+
+    try {
+      return { ...fallback, ...JSON.parse(jsonMatch[0]) };
+    } catch {
+      return fallback;
+    }
+  }
+};
 
 exports.chat = async (req, res) => {
   try {
@@ -26,21 +54,23 @@ exports.chat = async (req, res) => {
       });
     }
 
-    // convert embedding
-    const vector = await getEmbedding(message);
-    console.log(vector)
+    let relevantData = "";
 
-    // search in Pinecone for relevant memories
-    const searchResults = await searchMemories(
-      "users_memories",
-      req.user._id || req.user.id,
-      vector
-    );
+    try {
+      const vector = await getEmbedding(message);
+      const searchResults = await searchMemories(
+        "users_memories",
+        req.user._id || req.user.id,
+        vector
+      );
 
-    // filter relevant data from search results
-    let relevantData = searchResults.matches
-      .map((match) => match.metadata.text)
-      .join("\n");
+      relevantData = (searchResults.matches || [])
+        .map((match) => match.metadata?.text)
+        .filter(Boolean)
+        .join("\n");
+    } catch (memoryError) {
+      console.error("Memory search skipped:", memoryError.message);
+    }
 
     // context for the LLM (relevant data + user message)
     const context = `Relevant data:\n${relevantData}\n\n user message: ${message}`;
@@ -90,40 +120,24 @@ Return ONLY valid JSON:
 {
   "save": true,
   "memory": "User is learning MERN",
-  "answer": "That's great! MERN is a popular stack."
-  "nextQuestion": "What do you like most about MERN?"}
+  "answer": "That's great! MERN is a popular stack.",
+  "nextQuestion": "What do you like most about MERN?"
+}
   `;
 
     const response = await ai.models.generateContent({
-      model: process.env.AI_MODEL,
+      model: process.env.AI_MODEL || "gemini-2.0-flash",
       contents: prompt,
-      maxoutputTokens: 3000,
+      config: {
+        maxOutputTokens: 3000,
+        responseMimeType: "application/json",
+      },
     });
 
     const aiResponse = response.text || "No response";
 
-    // Store in pinecone if Ai condition is true
-
-    console.log(aiResponse);
-    // console.log(aiResponse.save) 
-    let aiResponseData = JSON.parse(aiResponse)
-    console.log(aiResponseData.save, aiResponseData.memory)
-
+    const aiResponseData = parseAiJson(aiResponse);
     let queryResponse = aiResponseData.answer;
-
-    const memoryEmbedding = await getEmbedding(aiResponseData.memory);
-
-    console.log("Memory embedding: ", memoryEmbedding);
-
-    if (aiResponseData.save) {
-      // userspace, userId, Id, vector, memoryText
-      await storeMemory(
-        "users_memories",
-        req.user._id || req.user.id,
-        chatId,
-        memoryEmbedding,
-        aiResponseData.memory);
-    }
 
     const userId = req.user._id || req.user.id;
 
@@ -172,11 +186,26 @@ Return ONLY valid JSON:
       });
     }
 
+    if (aiResponseData.save && aiResponseData.memory) {
+      try {
+        const memoryEmbedding = await getEmbedding(aiResponseData.memory);
+        await storeMemory(
+          "users_memories",
+          userId,
+          `${chat._id}-${Date.now()}`,
+          memoryEmbedding,
+          aiResponseData.memory
+        );
+      } catch (memoryError) {
+        console.error("Memory store skipped:", memoryError.message);
+      }
+    }
+
     res.status(200).json({
       success: true,
       response: queryResponse,
       chatId: chat._id,
-      memorySaved: aiResponseData.save,
+      memorySaved: !!(aiResponseData.save && aiResponseData.memory),
     });
 
   } catch (error) {

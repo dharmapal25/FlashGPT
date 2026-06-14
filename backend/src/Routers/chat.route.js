@@ -1,19 +1,22 @@
 const express = require('express');
 const { chat, getChats, getChat, deleteChat, updateChatTitle, toggleBookmark } = require('../controllers/chat.controller');
 const { isLoggedIn } = require('../middleware/auth.middleware');
+const { chatRateLimiter } = require('../middleware/rateLimit.middleware');
 
 const router = express.Router();
 
-router.post('/chat', isLoggedIn, chat);
+router.use(isLoggedIn);
 
-router.get('/chats', isLoggedIn, getChats);
+router.post('/chat', chatRateLimiter, chat);
 
-router.get('/chat/:chatId', isLoggedIn, getChat);
+router.get('/chats', chatRateLimiter, getChats);
 
-router.delete('/chat/:chatId', isLoggedIn, deleteChat);
+router.get('/chat/:chatId', chatRateLimiter, getChat);
 
-router.put('/chat/:chatId/title', isLoggedIn, updateChatTitle);
+router.delete('/chat/:chatId', chatRateLimiter, deleteChat);
 
-router.put('/chat/:chatId/bookmark', isLoggedIn, toggleBookmark);
+router.put('/chat/:chatId/title', chatRateLimiter, updateChatTitle);
+
+router.put('/chat/:chatId/bookmark', chatRateLimiter, toggleBookmark);
 
 module.exports = router;

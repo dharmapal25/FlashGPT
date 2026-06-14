@@ -4,8 +4,8 @@ const { userProfile } = require('../controllers/auth.controller');
 const { isLoggedIn } = require('../middleware/auth.middleware');
 
 const router = express.Router();
-// const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-// const isSecureCookie = frontendUrl.startsWith('https://');
+const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+const isSecureCookie = frontendUrl.startsWith('https://');
 
 router.get('/google',
   passport.authenticate('google', {
@@ -16,7 +16,7 @@ router.get('/google',
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    failureRedirect: `${process.env.FRONTEND_URL}/login`
+    failureRedirect: `${frontendUrl}/login`
   }),
   (req, res) => {
 
@@ -26,10 +26,10 @@ console.log("PASSPORT:", req.session.passport);
     req.session.save((err) => {
       if (err) {
         console.log(err);
-        return res.redirect(`${process.env.FRONTEND_URL}/login`);
+        return res.redirect(`${frontendUrl}/login`);
       }
 
-      return res.redirect(process.env.FRONTEND_URL);
+      return res.redirect(frontendUrl);
     });
   }
 );
@@ -43,8 +43,8 @@ router.get('/logout', (req, res) => {
 
       res.clearCookie('connect.sid', {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none'
+        secure: isSecureCookie,
+        sameSite: isSecureCookie ? 'none' : 'lax'
       });
 
       res.json({

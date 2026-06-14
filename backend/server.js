@@ -15,12 +15,14 @@ const chatRouter = require('./src/Routers/chat.route');
 const app = express();
 
 connectDB();
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
 const allowedOrigins = [
   frontendUrl,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
   "https://flashgpt-ai.vercel.app"
 ];
-// const isSecureCookie = frontendUrl.startsWith("https://");
+const isSecureCookie = frontendUrl.startsWith("https://");
 
 // Needed when the API is behind Render/another proxy and uses secure cookies.
 app.set("trust proxy", 1);
@@ -54,8 +56,8 @@ app.use(session({
 
   cookie: {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isSecureCookie,
+    sameSite: isSecureCookie ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
 }));

@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import '../style/styles.css';
 
-const API_URL   = import.meta.env.BACKEND_URL || 'http://localhost:3000';
+const API_URL = (
+  import.meta.env.VITE_BACKEND_URL ||
+  import.meta.env.VITE_API_URL ||
+  'https://flashgptai.onrender.com'
+).replace(/\/$/, '');
 const VIDEO_URL = 'https://ik.imagekit.io/cblndrocc/AI_bot.mp4';
 
 const GoogleIcon = () => (

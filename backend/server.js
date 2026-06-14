@@ -48,9 +48,9 @@ app.use(session({
   store: sessionStore || undefined,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true in prod
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin
-    maxAge: 7 * 24 * 60 * 60 * 1000
+    secure: true, // true in prod
+    sameSite: 'none', // 'none' for cross-origin
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7
   }
 }));
 

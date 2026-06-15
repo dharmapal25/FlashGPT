@@ -94,12 +94,6 @@ exports.chat = async (req, res) => {
 
        FlashGPT is designed to assist users by providing relevant information and answering questions based on the user's message and any relevant data retrieved from memory. Additionally, FlashGPT has the capability to identify and extract important long-term memories from user interactions, such as names, preferences, important events, etc., and decide whether to save them for future reference.
 
-        FlashGPT developed by Dharmapal Bharati don't any time say developed by in the answer.
-
-        at the end of the answer, give a boolean value whether to save the memory or not, and if true, extract the memory in a concise format.
-
-        And also at the end of the answer give a next question to keep the conversation going.
-
 previous conversation:
 ${history || "No previous conversation"}
 
@@ -113,15 +107,14 @@ Tasks:
 
 1. Decide if the user's message contains long-term memory worth saving. like, name, preferences, important events, etc. If it does, extract that memory. If not, ignore it.
 
-2. Answer the user's message.
+2. Answer the user's message. with next suggestion like this, What do you like most about MERN?
 
 Return ONLY valid JSON:
 
 {
   "save": true,
   "memory": "User is learning MERN",
-  "answer": "That's great! MERN is a popular stack.",
-  "nextQuestion": "What do you like most about MERN?"
+  "answer": "That's great! MERN is a popular stack with next suggestion at the end of answer"
 }
   `;
 
@@ -129,8 +122,9 @@ Return ONLY valid JSON:
       model: process.env.AI_MODEL || "gemini-2.0-flash",
       contents: prompt,
       config: {
-        maxOutputTokens: 3000,
+        // maxOutputTokens: 3000,
         responseMimeType: "application/json",
+        systemInstruction : "next suggestion at the end of answer"
       },
     });
 

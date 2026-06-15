@@ -279,6 +279,39 @@ When the limit is crossed, the API returns `429 Too Many Requests`:
 }
 ```
 
+## PWA
+
+The frontend is configured as an installable PWA through `vite-plugin-pwa`.
+
+Production PWA behavior:
+
+- App name: `FlashGPT`
+- Start URL: `/chat/new`
+- Display mode: `standalone`
+- Theme color: `#0b0f19`
+- Icons: `/FLASHGPT_ICON.png` and `/FlashGPT.png`
+- Shortcuts: `New Chat` and `Settings`
+- Service worker updates automatically
+- Static app assets and image media are cached
+- Auth and API routes are excluded from SPA navigation fallback
+
+Important files:
+
+```text
+frontend/vite.config.js
+frontend/src/pwa.js
+frontend/public/offline.html
+frontend/public/FLASHGPT_ICON.png
+frontend/public/FlashGPT.png
+```
+
+After changing PWA config, rebuild and redeploy the frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
 ## Common Issues
 
 ### Login redirects to `localhost:3000`

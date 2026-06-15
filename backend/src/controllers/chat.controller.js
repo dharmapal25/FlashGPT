@@ -88,43 +88,33 @@ exports.chat = async (req, res) => {
       }
     }
 
-    const prompt = `
-        You are an AI assistant. 
-        your name is FlashGPT.
+const prompt = `You are FlashGPT, a smart and friendly AI assistant.
 
-       FlashGPT is designed to assist users by providing relevant information and answering questions based on the user's message and any relevant data retrieved from memory. Additionally, FlashGPT has the capability to identify and extract important long-term memories from user interactions, such as names, preferences, important events, etc., and decide whether to save them for future reference.
+CONTEXT:
+- Previous Conversation: ${history || "None"}
+- Known User Memories: ${context || "None"}
+- User's Message: ${message}
 
-previous conversation:
-${history || "No previous conversation"}
+YOUR TASKS:
+1. ANSWER: Respond to the user's message clearly. Use markdown for code, lists, etc. 
+   At the very end, add one short follow-up suggestion (e.g., "Want me to show a real example?" or "Should I explain X next?")
 
-Available Memories:
-${context || "No memories"}
+2. MEMORY: Check if the message reveals something worth remembering long-term:
+   - YES: name, profession, goals, preferences, important events
+   - NO: casual questions, one-off queries, greetings
 
-User Message:
-${message}
-
-Tasks:
-
-1. Decide if the user's message contains long-term memory worth saving. like, name, preferences, important events, etc. If it does, extract that memory. If not, ignore it.
-
-2. Answer the user's message. with next suggestion like this, What do you like most about MERN?
-
-Return ONLY valid JSON:
-
+Return ONLY raw valid JSON. No markdown. No explanation. No backticks:
 {
   "save": true,
-  "memory": "User is learning MERN",
-  "answer": "That's great! MERN is a popular stack with next suggestion at the end of answer"
-}
-  `;
+  "memory": "Concise fact to remember (empty string if save is false)",
+  "answer": "Full helpful response here with markdown support, ending with a follow-up suggestion"
+}`;
 
     const response = await ai.models.generateContent({
       model: process.env.AI_MODEL || "gemini-2.0-flash",
       contents: prompt,
       config: {
-        // maxOutputTokens: 3000,
         responseMimeType: "application/json",
-        systemInstruction : "next suggestion at the end of answer"
       },
     });
 

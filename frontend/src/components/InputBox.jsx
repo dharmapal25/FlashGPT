@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, Send } from 'lucide-react';
 
 const InputBox = ({ input, setInput, onSend, disabled }) => {
   const [isListening, setIsListening] = useState(false);
@@ -58,7 +58,7 @@ const InputBox = ({ input, setInput, onSend, disabled }) => {
           disabled={disabled || !input.trim()}
           type="button"
         >
-          {disabled ? <span className="sendSpinner" /> : 'Send'}
+          {disabled ? <span className="sendSpinner" /> : <Send size={17}/>}
         </button>
       </div>
     </div>

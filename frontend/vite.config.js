@@ -8,34 +8,70 @@ export default defineConfig({
 
     VitePWA({
       registerType: "autoUpdate",
-      // generateSW with sensible runtimeCaching for API calls
       strategies: 'generateSW',
-      includeAssets: ['favicon.svg', 'favicon.ico'],
+      includeAssets: [
+        'FLASHGPT_ICON.png',
+        'FlashGPT.png',
+        'offline.html',
+      ],
       manifest: {
+        id: '/',
         name: 'FlashGPT',
         short_name: 'FlashGPT',
-        description: 'AI Chat Assistant',
-        theme_color: '#000000',
+        description: 'AI chat assistant with Google login, Gemini responses, and long-term memory.',
+        theme_color: '#0b0f19',
         background_color: '#0d0f13',
         display: 'standalone',
+        display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
         scope: '/',
-        start_url: '/',
+        start_url: '/chat/new',
+        orientation: 'portrait-primary',
+        categories: ['productivity', 'utilities'],
         icons: [
-          { src: '/FLASHGPT_ICON.png', sizes: '192x192', type: 'image/png' },
-          { src: '/FLASHGPT.png', sizes: '512x512', type: 'image/png' }
+          {
+            src: '/FLASHGPT_ICON.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/FlashGPT.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: 'New Chat',
+            short_name: 'New Chat',
+            description: 'Start a new FlashGPT chat',
+            url: '/chat/new',
+            icons: [{ src: '/FLASHGPT_ICON.png', sizes: '192x192', type: 'image/png' }]
+          },
+          {
+            name: 'Settings',
+            short_name: 'Settings',
+            description: 'Open FlashGPT settings',
+            url: '/settings',
+            icons: [{ src: '/FLASHGPT_ICON.png', sizes: '192x192', type: 'image/png' }]
+          }
         ]
       },
       workbox: {
         cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         navigateFallback: '/',
+        navigateFallbackDenylist: [/^\/auth\//, /^\/api\//],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
         runtimeCaching: [
           {
-            urlPattern: /\/api\//,
-            handler: 'NetworkFirst',
+            urlPattern: ({ url }) => url.origin === 'https://ik.imagekit.io',
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'api-cache',
-              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 },
-              networkTimeoutSeconds: 10
+              cacheName: 'media-cache',
+              expiration: { maxEntries: 20, maxAgeSeconds: 7 * 24 * 60 * 60 }
             }
           },
           {
@@ -49,7 +85,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module'
       }
     })

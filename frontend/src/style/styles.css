@@ -1213,6 +1213,16 @@ a { color: var(--accent); text-decoration: none; }
 
 .lp-brandIcon { font-size: 18px; line-height: 1; }
 
+.logo{
+   width: 8%;
+  }
+
+.lp-brandName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: -0.01em;
+}
 
 .logo{
    width: 8%;

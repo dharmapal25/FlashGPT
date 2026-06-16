@@ -1,109 +1,119 @@
+<div align="center">
+
+<img src="frontend/Public/FlashGPT.png" width="80" style="border-radius:16px" />
+
 # FlashGPT
 
-AI chat application with Google login, persistent chat history, memory search, and a clean React interface.
+**Your AI, built for builders.**
 
-![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Backend](https://img.shields.io/badge/Backend-Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
-![AI](https://img.shields.io/badge/AI-Groq-FF6B00?style=for-the-badge)
-![Database](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-![Vector DB](https://img.shields.io/badge/Vector%20DB-Pinecone-000000?style=for-the-badge)
+*Chat smarter. Code faster. Ship better.*
 
-## Live Demo + Screenshot
+[![Live](https://img.shields.io/badge/▲%20Live-flashgpt--ai.vercel.app-00c950?style=flat)](https://flashgpt-ai.vercel.app)
 
-## Live URLs
+![React](https://img.shields.io/badge/REACT%20+%20VITE-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Express](https://img.shields.io/badge/EXPRESS.JS-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MONGODB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Groq](https://img.shields.io/badge/GROQ%20AI-FF6B00?style=for-the-badge)
+![Pinecone](https://img.shields.io/badge/PINECONE%20VECTOR%20DB-000000?style=for-the-badge)
 
-- Frontend: `https://flashgpt-ai.vercel.app`
-- Backend: `https://flashgptai.onrender.com`
-- Google callback: `https://flashgptai.onrender.com/auth/google/callback`
+</div>
 
-![FlashGPT Screenshot](frontend/Public/FlashGPT.png)
+---
+
+## What is FlashGPT?
+
+FlashGPT is a full-stack AI chat assistant that helps developers think faster, code better, and ship smarter — powered by **Groq AI** with long-term memory using **Pinecone vector search**.
+
+Built with a dark-first design, it supports **Google OAuth login**, persistent **chat history**, and beautifully renders **markdown + code blocks** in responses.
+
+---
+
+## 🚀 Live URLs
+
+| Service  | URL |
+|----------|-----|
+| Frontend | [flashgpt-ai.vercel.app](https://flashgpt-ai.vercel.app) |
+| Backend  | [flashgptai.onrender.com](https://flashgptai.onrender.com) |
+
+---
+
+## 📸 Screenshots
+
+### login
+![FlashGPT Screenshot](frontend/Public/login.png)
+### Conversation
 ![FlashGPT Screenshot](frontend/Public/image.png)
-## Features
+### Features
+![FlashGPT Screenshot](frontend/Public/bookmark.png)
+### Logout
+![FlashGPT Screenshot](frontend/Public/logout.png)
 
-- AI chat responses powered by Groq.
-- Google OAuth login with session support.
-- Chat history with saved conversations.
-- Bookmark and delete chat support.
-- Memory search using embeddings and Pinecone.
-- Markdown rendering for assistant responses.
-- Code block rendering with syntax highlighting.
-- Responsive React UI.
-- PWA-ready frontend setup.
+---
 
-## Tech Stack
+## ✨ Features
+
+- AI responses powered by **Groq**
+-  **Google OAuth** login with session support
+-  Persistent **chat history** with saved conversations
+-  Bookmark and delete chat support
+-  **Memory search** using embeddings + Pinecone
+-  **Markdown rendering** for assistant responses
+-  **Code block** rendering with syntax highlighting
+-  Fully **responsive** React UI
+-  **PWA-ready** frontend setup
+
+---
+
+## 🛠️ Tech Stack
 
 **Frontend**
-
-- React
-- Vite
-- React Router
-- Axios
-- Lucide React
-- React Markdown
-- Remark GFM
-- Rehype Highlight
-- Vite PWA
+React · Vite · React Router · Axios · Lucide React · React Markdown · Remark GFM · Rehype Highlight · Vite PWA
 
 **Backend**
-
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- Passport Google OAuth 2.0
-- Express Session
-- Connect Mongo
-- JSON Web Token
-- Groq SDK
-- Google GenAI embeddings
-- Pinecone
+Node.js · Express.js · MongoDB · Mongoose · Passport Google OAuth 2.0 · Express Session · Connect Mongo · Groq SDK · Google GenAI Embeddings · Pinecone
 
 **Deployment**
+Frontend → Vercel · Backend → Render
 
-- Frontend: Vercel
-- Backend: Render
+---
 
-## Installation
+## ⚙️ Installation
 
-1. Clone the repository.
-
+**1. Clone the repo**
 ```bash
 git clone https://github.com/dharmapal25/FlashGPT.git
 cd FlashGPT
 ```
 
-2. Install backend dependencies.
-
+**2. Install backend dependencies**
 ```bash
 cd backend
 npm install
 ```
 
-3. Install frontend dependencies.
-
+**3. Install frontend dependencies**
 ```bash
 cd ../frontend
 npm install
 ```
 
-4. Start the backend.
-
+**4. Start the backend**
 ```bash
 cd ../backend
 npm start
 ```
 
-5. Start the frontend.
-
+**5. Start the frontend**
 ```bash
 cd ../frontend
 npm run dev
 ```
 
-## Env Variables
+---
+
+## 🔐 Environment Variables
 
 Create `backend/.env`:
-
 ```env
 GROQ_API_KEY=your_groq_api_key
 GROQ_AI_MODEL=groq/compound
@@ -124,42 +134,58 @@ ACCESS_TOKEN_SECRET=your_access_token_secret
 ```
 
 Create `frontend/.env`:
-
 ```env
 VITE_BACKEND_URL=https://flashgptai.onrender.com
 ```
 
-## Folder Structure
+---
+
+## 📁 Folder Structure
 
 ```text
 .
-|-- backend
-|   |-- src
-|   |   |-- config
-|   |   |-- controllers
-|   |   |-- middleware
-|   |   |-- models
-|   |   |-- Routers
-|   |   |-- services
-|   |   `-- utils
-|   |-- package.json
-|   `-- server.js
-|-- frontend
-|   |-- Public
-|   |-- src
-|   |   |-- components
-|   |   |-- context
-|   |   |-- pages
-|   |   |-- routes
-|   |   |-- services
-|   |   `-- style
-|   `-- package.json
-`-- README.md
+├── backend
+│   ├── src
+│   │   ├── config
+│   │   ├── controllers
+│   │   ├── middleware
+│   │   ├── models
+│   │   ├── Routers
+│   │   ├── services
+│   │   └── utils
+│   ├── package.json
+│   └── server.js
+├── frontend
+│   ├── Public
+│   ├── src
+│   │   ├── components
+│   │   ├── context
+│   │   ├── pages
+│   │   ├── routes
+│   │   ├── services
+│   │   └── style
+│   └── package.json
+└── README.md
 ```
 
-## Author/Contact
+---
 
-**Flash**
+## 👤 Author
 
-- Frontend: `https://flashgpt-ai.vercel.app`
-- Backend: `https://flashgptai.onrender.com`
+<div align="center">
+
+**Dharmapal (Flash)**
+
+[![Portfolio](https://img.shields.io/badge/Portfolio-flash--devs.vercel.app-000000?style=for-the-badge)](https://flash-devs.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-dharmapal25-181717?style=for-the-badge&logo=github)](https://github.com/dharmapal25)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-dharmapal25-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/dharmapal25)
+
+</div>
+
+---
+
+<div align="center">
+
+Built with ❤️ by Dharmapal 
+
+</div>

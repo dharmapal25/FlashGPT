@@ -19,13 +19,9 @@ router.get(
     failureRedirect: `${frontendUrl}/login`
   }),
   (req, res) => {
-
-    console.log("SESSION ID AFTER LOGIN:", req.sessionID);
-console.log("PASSPORT:", req.session.passport);
-
     req.session.save((err) => {
       if (err) {
-        console.log(err);
+        console.error("Session save error:", err);
         return res.redirect(`${frontendUrl}/login`);
       }
 

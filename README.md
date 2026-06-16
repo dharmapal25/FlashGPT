@@ -68,8 +68,8 @@ AI chat application with Google login, persistent chat history, memory search, a
 1. Clone the repository.
 
 ```bash
-git clone <your-repo-url>
-cd 2026-06-04
+git clone https://github.com/dharmapal25/FlashGPT.git
+cd FlashGPT
 ```
 
 2. Install backend dependencies.
@@ -126,7 +126,7 @@ ACCESS_TOKEN_SECRET=your_access_token_secret
 Create `frontend/.env`:
 
 ```env
-BACKEND_URL=https://flashgptai.onrender.com
+VITE_BACKEND_URL=https://flashgptai.onrender.com
 ```
 
 ## Folder Structure

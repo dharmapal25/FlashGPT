@@ -68,13 +68,6 @@ app.use(passport.session());
 app.use('/auth', authRouter);
 app.use('/api', chatRouter);
 
-app.use((req, res, next) => {
-  console.log("COOKIE HEADER:", req.headers.cookie);
-  console.log("SESSION ID:", req.sessionID);
-  console.log("PASSPORT:", req.session.passport);
-  next();
-});
-
 app.get('/', (req, res) => {
   res.send('Backend Running');
 });

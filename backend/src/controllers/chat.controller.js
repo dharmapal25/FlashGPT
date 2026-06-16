@@ -7,6 +7,33 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const generateGroqJson = async (prompt) => {
+  const payload = {
+    model: process.env.GROQ_AI_MODEL || "groq/compound",
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  };
+
+  try {
+    return await groq.chat.completions.create({
+      ...payload,
+      response_format: {
+        type: "json_object",
+      },
+    });
+  } catch (error) {
+    const status = error.status || error.statusCode;
+    if (status !== 400) throw error;
+
+    console.warn("Groq JSON mode skipped:", error.message);
+    return groq.chat.completions.create(payload);
+  }
+};
+
 const parseAiJson = (rawText) => {
   const fallback = {
     save: false,
@@ -110,18 +137,7 @@ Return ONLY raw valid JSON. No markdown. No explanation. No backticks:
   "answer": "Full helpful response here with markdown support, ending with a follow-up suggestion"
 }`;
 
-    const response = await groq.chat.completions.create({
-      model: process.env.GROQ_AI_MODEL || "groq/compound",
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      response_format: {
-        type: "json_object",
-      },
-    });
+    const response = await generateGroqJson(prompt);
 
     const aiResponse = response.choices?.[0]?.message?.content || "No response";
 
@@ -153,7 +169,9 @@ Return ONLY raw valid JSON. No markdown. No explanation. No backticks:
         },
         { new: true }
       );
-    } else {
+    }
+
+    if (!chat) {
 
       // new chat
       chat = await Chat.create({

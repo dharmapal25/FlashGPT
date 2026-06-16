@@ -3,8 +3,6 @@ const { gemini } = require("../utils/apikey");
 
 async function getEmbedding(text) {
 
-    console.log(typeof text)
-
     const response = await gemini.models.embedContent({
         model: "gemini-embedding-001",
         contents: String(text),

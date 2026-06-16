@@ -5,6 +5,7 @@ const InputBox = ({ input, setInput, onSend, disabled }) => {
   const [isListening, setIsListening] = useState(false);
   const [micSupported, setMicSupported] = useState(false);
   const recRef = useRef(null);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -31,9 +32,18 @@ const InputBox = ({ input, setInput, onSend, disabled }) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSend(); }
   };
 
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 180)}px`;
+  }, [input]);
+
   return (
     <div className="inputBox">
       <textarea
+        ref={textareaRef}
         value={input}
         onChange={e => setInput(e.target.value)}
         onKeyPress={handleKey}

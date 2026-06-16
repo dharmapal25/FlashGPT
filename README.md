@@ -17,7 +17,7 @@ AI chat application with Google login, persistent chat history, memory search, a
 - Google callback: `https://flashgptai.onrender.com/auth/google/callback`
 
 ![FlashGPT Screenshot](frontend/Public/FlashGPT.png)
-
+![FlashGPT Screenshot](frontend/Public/image.png)
 ## Features
 
 - AI chat responses powered by Groq.

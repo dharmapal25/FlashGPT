@@ -88,7 +88,7 @@ const LoginPage = () => {
       <div className="lp-formPanel">
 
         <div className="lp-brand">
-          <span className="lp-brandIcon">⚡</span>
+            <img src="./../Public/FLASHGPT.png" alt="" srcset="" className='logo' />
           <span className="lp-brandName">Flash GPT</span>
         </div>
 

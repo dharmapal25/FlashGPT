@@ -766,13 +766,13 @@ a { color: var(--accent); text-decoration: none; }
   max-height: 180px;
   overflow-y: auto;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   box-shadow: 0 8px 30px rgba(0,0,0,.06);
 }
 .inputBox textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  /* box-shadow: 0 0 0 3px var(--accent-glow); */
 }
 .inputBox textarea::placeholder { color: var(--text-dim); }
 .inputBox textarea:disabled { opacity: 0.5; }
@@ -1213,10 +1213,15 @@ a { color: var(--accent); text-decoration: none; }
 
 .lp-brandIcon { font-size: 18px; line-height: 1; }
 
+
+.logo{
+   width: 8%;
+  }
+
 .lp-brandName {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
-  color: #f5f5f0;
+  color: #000000;
   letter-spacing: -0.01em;
 }
 

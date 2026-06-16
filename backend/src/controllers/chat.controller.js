@@ -1,10 +1,10 @@
-const { GoogleGenAI } = require("@google/genai");
+const Groq = require("groq-sdk");
 const Chat = require("../models/chat.model");
 const { getEmbedding } = require("../services/embedding");
 const { searchMemories, storeMemory } = require("../services/Pinecone");
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GOOGLE_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 const parseAiJson = (rawText) => {
@@ -110,15 +110,20 @@ Return ONLY raw valid JSON. No markdown. No explanation. No backticks:
   "answer": "Full helpful response here with markdown support, ending with a follow-up suggestion"
 }`;
 
-    const response = await ai.models.generateContent({
-      model: process.env.AI_MODEL || "gemini-2.0-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
+    const response = await groq.chat.completions.create({
+      model: process.env.GROQ_AI_MODEL || "groq/compound",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      response_format: {
+        type: "json_object",
       },
     });
 
-    const aiResponse = response.text || "No response";
+    const aiResponse = response.choices?.[0]?.message?.content || "No response";
 
     const aiResponseData = parseAiJson(aiResponse);
     let queryResponse = aiResponseData.answer;
@@ -193,7 +198,7 @@ Return ONLY raw valid JSON. No markdown. No explanation. No backticks:
     });
 
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("Groq Error:", error);
 
     res.status(500).json({
       success: false,

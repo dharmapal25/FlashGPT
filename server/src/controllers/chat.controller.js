@@ -1,43 +1,42 @@
+import groq from "../config/groq.js"
 
 
-const testChat = (req, res) => {
-    const { message } = req.body
-}
-
-
-chat = async (req, res) => {
+const testChat = async (req, res) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                message: "User not authenticated",
-            });
-        }
+        const { message } = req.body;
 
-        const { message, chatId } = req.body;
-
-        if (!message) {
+        // Validation
+        if (!message || message.trim() === "") {
             return res.status(400).json({
                 success: false,
-                message: "Message is required",
+                error: "Message is required.",
             });
         }
 
-        res.status(200).json({
-            success: true,
+        const response = await groq.chat.completions.create({
+            model: process.env.GROQ_AI_MODEL_2,
+            messages: [
+                {
+                    role: "user",
+                    content: message,
+                },
+            ],
+            //   temperature: 0.7,  // creative answer 0, 0.2 .... 0.7, 1.0 +
+              max_tokens: 2000, // context window
         });
 
-    } catch (error) {
-        console.error("Groq Error:", error);
+        return res.status(200).json({
+            success: true,
+            data: response.choices[0].message.content,
+        });
+    } catch (err) {
+        console.error("Groq Error:", err);
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Something went wrong with AI chat",
-            error: error.message,
+            error: err.message || "Something went wrong.",
         });
     }
 };
 
-export {
-    testChat
-};
+export { testChat };

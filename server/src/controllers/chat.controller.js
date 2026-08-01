@@ -1,11 +1,10 @@
-import groq from "../config/groq.js"
+import AiResponse from "../utils/aireponse.js";
 
 
-const testChat = async (req, res) => {
+const Chat = async (req, res) => {
     try {
         const { message } = req.body;
 
-        // Validation
         if (!message || message.trim() === "") {
             return res.status(400).json({
                 success: false,
@@ -13,22 +12,13 @@ const testChat = async (req, res) => {
             });
         }
 
-        const response = await groq.chat.completions.create({
-            model: process.env.GROQ_AI_MODEL_2,
-            messages: [
-                {
-                    role: "user",
-                    content: message,
-                },
-            ],
-            //   temperature: 0.7,  // creative answer 0, 0.2 .... 0.7, 1.0 +
-              max_tokens: 2000, // context window
-        });
+        const response = await AiResponse(message);
 
         return res.status(200).json({
             success: true,
-            data: response.choices[0].message.content,
+            data: response,
         });
+
     } catch (err) {
         console.error("Groq Error:", err);
 
@@ -39,4 +29,4 @@ const testChat = async (req, res) => {
     }
 };
 
-export { testChat };
+export { Chat };

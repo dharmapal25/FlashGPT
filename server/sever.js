@@ -5,14 +5,12 @@ import app from "./src/app.js";
 
 const PORT = process.env.PORT
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
 
     res.json({
         message: "hello"
     })
-    console.log("first")
 })
-console.log("first")
 
 
 app.listen(PORT,() => {

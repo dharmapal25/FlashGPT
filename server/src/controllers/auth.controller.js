@@ -19,8 +19,9 @@ export const googleCallback = (req, res) => {
   });
 
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  res.redirect(`${frontendUrl}/profile`);
+  res.redirect(`${frontendUrl}/chat`);
 };
+
 
 export const profile = (req, res) => {
 
@@ -30,6 +31,27 @@ export const profile = (req, res) => {
   });
 
 };
+
+
+export const checkAuth = (req, res) => {
+
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  res.json({
+    success: true,
+    user
+  });
+
+
+
+}
+
 
 export const logout = (req, res) => {
 

@@ -25,8 +25,9 @@ connectDB();
 
 app.use("/api/auth", authRoutes);
 
-
-
 app.use('/api', chatRoute)
+
+
+
 
 export default app

@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "../config/passport.js";
-import { googleCallback, logout, profile } from "../controllers/auth.controller.js";
+import { checkAuth, googleCallback, logout, profile } from "../controllers/auth.controller.js";
 import authVerify from "../middleware/authToken.middleware.js";
 
 const router = express.Router();
@@ -22,6 +22,8 @@ router.get("/google/callback", passport.authenticate("google", {
 );
 
 router.get("/profile", authVerify, profile);
+
+router.get("/protected", authVerify, checkAuth);
 
 router.get("/logout", logout);
 

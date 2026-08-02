@@ -5,15 +5,18 @@ import authVerify from "../middleware/authToken.middleware.js";
 
 const router = express.Router();
 
+// @route GET /api/auth/google
 router.get("/google", passport.authenticate("google", {
     scope: ["profile", "email"],
     session: false,
 })
 );
 
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+
 router.get("/google/callback", passport.authenticate("google", {
     session: false,
-    failureRedirect: "/failed",
+    failureRedirect: `${frontendUrl}/login`,
 }),
     googleCallback
 );

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import env from "../config/env.js";
 
 const authVerify = (req, res, next) => {
   const token = req.cookies.token;
@@ -11,7 +12,7 @@ const authVerify = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, env.JWT_SECRET);
 
     req.user = decoded;
 

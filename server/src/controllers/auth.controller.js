@@ -1,12 +1,14 @@
 import jwt from "jsonwebtoken";
+import env from "../config/env.js";
 
 export const googleCallback = (req, res) => {
+
 
   const token = jwt.sign(
     {
       id: req.user._id,
     },
-    process.env.JWT_SECRET,
+    env.JWT_SECRET,
     {
       expiresIn: "7d",
     }
@@ -14,11 +16,10 @@ export const googleCallback = (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
   });
 
-  res.redirect("/profile");
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  res.redirect(`${frontendUrl}/profile`);
 };
 
 export const profile = (req, res) => {

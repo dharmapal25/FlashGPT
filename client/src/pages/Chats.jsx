@@ -12,48 +12,17 @@ const Chats = () => {
     const [titles, setTitles] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Refresh support
+    // ----------------------------
+    // Load all conversations
+    // ----------------------------
 
-    useEffect(() => {
-
-        if (chatId) {
-            localStorage.setItem("chatId", chatId);
-            loadConversation(chatId);
-
-        } else {
-            const savedId = localStorage.getItem("chatId");
-
-            if (savedId) {
-                navigate(`/chat/${savedId}`, { replace: true });
-            }
-        }
-
-    }, [chatId]);
-
-
-    // All chats
-
-    useEffect(() => {
-        API.get("/chat/all-conversation",{withCredentials : true})
-            .then((res) => {
-                console.log(res.data)
-                // setTitles(res.data)
-            }).catch((err) => {
-                console.log("ERROR", err)
-            })
-    }, [])
-
-
-    // Load conversation
-
-    const loadConversation = async (id) => {
+    const loadAllChats = async () => {
 
         try {
+            const { data } = await API.get("/chat/all-conversation");
 
-            const { data } = await API.get(`/chat/conversation/${id}`);
             if (data.success) {
-                setMessages(data.messages);
-                setTitles(data.title);
+                setTitles(data.chats);
             }
 
         } catch (err) {
@@ -61,11 +30,49 @@ const Chats = () => {
         }
     };
 
-    console.log(titles)
 
-    // -----------------------
+    // Load one conversation
+
+    const loadConversation = async (id) => {
+
+        if (!id) return;
+
+        try {
+            const { data } = await API.get(`/chat/conversation/${id}`);
+
+            if (data.success) {
+                setMessages(data.messages);
+
+                navigate(`/chat/${id}`);
+
+            }
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+
+    // First Load
+
+    useEffect(() => {
+        loadAllChats();
+    }, []);
+
+
+    // Refresh Support
+
+    useEffect(() => {
+        if (chatId) {
+            loadConversation(chatId);
+
+        } else {
+            setMessages([]);
+        }
+    }, [chatId]);
+
+
     // Send Message
-    // -----------------------
 
     const getResponse = async () => {
 
@@ -75,102 +82,114 @@ const Chats = () => {
         setLoading(true);
 
         try {
-
             const { data } = await API.post("/chat/conversation", {
                 message: currentMessage,
                 chatId,
-
             });
-            console.log("data : ", data.response.title)
+
             if (data.success) {
+                await loadAllChats();
+                await loadConversation(data.chatId);
 
-                // New chat
-                if (!chatId) {
-
-                    localStorage.setItem("chatId", data.chatId);
-                    navigate(`/chat/${data.chatId}`);
-
-                } else {
-                    loadConversation(chatId);
-                }
             }
+
         } catch (err) {
             console.log(err);
+
         } finally {
             setLoading(false);
+
         }
 
     };
 
 
+
     // New Chat
 
     const newChat = () => {
-
-        localStorage.removeItem("chatId");
         setMessages([]);
         setMessage("");
-        navigate("/chat");
 
+        navigate("/chat");
     };
 
 
 
     return (
 
-        <div style={{ width: "700px", margin: "30px auto", color: "#afafaf" }}>
-            <h2>FlashGPT</h2>
+        <div className="main-container" style={{ display: "flex", gap: "20px", }}>
 
-            <button onClick={newChat}>
-                New Chat
-            </button>
+            {/* Sidebar */}
 
-            <div
-                style={{
+            <div style={{
+                width: "250px",
+                borderRight: "1px solid gray",
+                padding: "20px"
+            }}>
+
+                <button onClick={newChat}> + New Chat</button>
+
+                <br />
+
+                {
+
+                    titles.map((chat) => (
+                        <div key={chat._id}
+                            onClick={() => loadConversation(chat._id)}
+                            style={{
+                                cursor: "pointer",
+                                padding: "10px",
+                                borderBottom: "1px solid #444",
+                            }}
+                        >{chat.title}</div>
+                    ))
+
+                }
+            </div>
+
+
+            {/* Chat */}
+
+            <div style={{ width: "700px", color: "#afafaf", }}>
+                <h2>FlashGPT</h2>
+
+                <div style={{
                     border: "1px solid gray",
                     padding: "20px",
                     height: "500px",
                     overflowY: "auto",
                     marginBottom: "20px",
-                }}
-            >
-                {
-                    messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                marginBottom: "15px",
-                                textAlign: msg.role === "user" ? "right" : "left",
-                            }}
-                        >
-                            <b>{msg.role === "user" ? "You" : "FlashGPT"}</b>
-                            <p>{msg.content}</p>
-                        </div>
-                    ))
-                }
+                }}>
+                    {
+                        messages.map((msg, index) => (
+                            <div key={index} style={{ marginBottom: "15px", textAlign: msg.role === "user" ? "right" : "left", }}>
+                                <p>{msg.content}</p>
+                            </div>
+                        ))
 
-                {loading && <p>Thinking...</p>}
+                    }
+
+                    {loading && <p>Thinking...</p>}
+
+                </div>
+
+                <input type="text"
+                    placeholder="Ask something..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
+
+                        if (e.key === "Enter") {
+                            getResponse();
+                        }
+
+                    }}
+                    style={{ width: "100%", padding: "12px" }}
+                />
 
             </div>
-
-            <input
-                type="text"
-                placeholder="Ask something..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        getResponse();
-                    }
-                }}
-
-                style={{
-                    width: "100%",
-                    padding: "12px",
-                }}
-            />
         </div>
-
     );
 };
 

@@ -189,12 +189,13 @@ const getAllConversation = async (req, res) => {
             });
         }
 
-        const AllChats = await Conversation.find({ userId: req.user.id }).populate("userId")
+        const AllChats = await Conversation.find({ userId: req.user.id })
+            .populate("userId")
+            .sort({ updatedAt: -1 }); // Change to createdAt if preferred
 
         res.json({
             success: true,
-            chats: AllChats,
-            // title : AllChats?.title
+            chats: AllChats
         });
 
     } catch (err) {

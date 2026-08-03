@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import API from "../services/api";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FiMessageSquare } from "react-icons/fi";
@@ -15,7 +15,7 @@ const Chats = () => {
     const { chatId } = useParams();
 
     let { user } = useAuth()
-console.log(user)
+    console.log(user)
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const [titles, setTitles] = useState([]);
@@ -140,15 +140,20 @@ console.log(user)
 
                 {/* Profile Section at Bottom Left */}
                 <div className="sidebar-footer">
-                    <div className="user-profile">
-                        <div className="avatar">D</div>
-                        {isSidebarOpen && (
-                            <div className="user-info">
-                                <span className="user-name">Dharmapal</span>
-                                <span className="user-plan">Pro User</span>
+                    <Link to={"/profile"} >
+                        <div className="user-profile">
+                            <div className="avatar">
+                                {
+                                    localStorage.getItem("image") && <img src={localStorage.getItem("image")} className="default" /> || <img src="qw.jpg" alt="deafult" className="default" />
+                                }
                             </div>
-                        )}
-                    </div>
+                            {isSidebarOpen && (
+                                <div className="user-info">
+                                    <span className="user-name">Profile</span>
+                                </div>
+                            )}
+                        </div>
+                    </Link>
                 </div>
             </aside>
 

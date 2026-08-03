@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import ProtectedRoute from './routes/ProtectedRoute.jsx'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import PublicRoute from './routes/PublicRoute.jsx'
+import Profile from './pages/Profile.jsx'
 
 
 const routers = createBrowserRouter([
@@ -20,6 +21,14 @@ const routers = createBrowserRouter([
             <PublicRoute>
                 <Login />
             </PublicRoute>
+    },
+
+    {
+        path: "/profile",
+        element:
+            <ProtectedRoute>
+                <Profile />
+            </ProtectedRoute>
     },
 
     {

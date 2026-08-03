@@ -21,6 +21,7 @@ router.get("/google/callback", passport.authenticate("google", {
     googleCallback
 );
 
+// api/auth/profile
 router.get("/profile", authVerify, profile);
 
 router.get("/protected", authVerify, checkAuth);

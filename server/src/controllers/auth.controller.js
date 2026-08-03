@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import env from "../config/env.js";
+import User from "../models/user.model.js";
+import Conversation from "../models/conversation.model.js";
 
 export const googleCallback = (req, res) => {
 
@@ -23,14 +25,36 @@ export const googleCallback = (req, res) => {
 };
 
 
-export const profile = (req, res) => {
+export const profile = async (req, res) => {
 
-  res.json({
-    success: true,
-    user: req.user,
-  });
+  const user = req.user;
 
-};
+  try {
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    let userData = await User.findById(user.id);
+    const TotalChats = await Conversation.find({ userId: user.id }).populate("userId");
+
+    res.json({
+      success: true,
+      user: userData,
+      TotalChats 
+    });
+
+
+  } catch (err) {
+
+    res.json({
+      success: false,
+      message: "Something went wrong"
+    })
+  }
+}
 
 
 export const checkAuth = (req, res) => {

@@ -18,6 +18,8 @@ const env = {
     GROQ_AI_MODEL_3: process.env.GROQ_AI_MODEL_3,
     GROQ_AI_MODEL_4: process.env.GROQ_AI_MODEL_4,
 
+    GROQ_AI_CONTEXT_WINDOW : process.env.GROQ_AI_CONTEXT_WINDOW,
+
     // Authentication configuration
     JWT_SECRET: process.env.JWT_SECRET,
 

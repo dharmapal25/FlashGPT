@@ -16,9 +16,9 @@ export const AuthProvider = ({ children }) => {
             const response = await API.get("/auth/protected",
                 { withCredentials: true }
             )
-            console.log(response.data)
             setUser(response.data.user)
 
+            console.log("AuthContext >>> : ", response.data.user)
         } catch (err) {
             console.log("Error : ", err)
             setError(err.message || "Something went wrong")

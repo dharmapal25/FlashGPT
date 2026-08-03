@@ -11,7 +11,7 @@ const AiResponse = async (message) => {
             },
         ],
         //   temperature: 0.7,  // creative answer 0, 0.2 .... 0.7, 1.0 +
-        max_tokens: 2000, // context window
+        max_tokens: Number(env.GROQ_AI_CONTEXT_WINDOW )
     });
 
     return response.choices[0].message.content;

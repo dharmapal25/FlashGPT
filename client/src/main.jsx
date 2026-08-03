@@ -9,10 +9,10 @@ import PublicRoute from './routes/PublicRoute.jsx'
 
 
 const routers = createBrowserRouter([
-    // {
-    //     path: "/",
-    //     element: <Navigate to="/login" />
-    // },
+    {
+        path: "/",
+        element: <Navigate to="/login" />
+    },
 
     {
         path: "/login",

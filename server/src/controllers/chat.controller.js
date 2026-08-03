@@ -76,7 +76,7 @@ YOUR TASKS:
    At the very end, add one short follow-up suggestion (e.g., "Want me to show a real example?" or "Should I explain X next?")
 `;
 
-        const response = await aiResponse(prompt);
+        const response = await AiResponse(prompt);
         let queryResponse = response || "No response";
 
 
@@ -146,4 +146,14 @@ YOUR TASKS:
     }
 };
 
-export { Chat, setConversation };
+
+const getConversation = async (req, res) => {
+
+    const { chatId } = req.params
+
+    let chatData = await Conversation.findById(chatId)
+
+    console.log("chatData : ", chatData)
+    res.json(chatData)
+}
+export { Chat, setConversation, getConversation };

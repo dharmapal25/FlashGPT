@@ -28,7 +28,15 @@ const routers = createBrowserRouter([
             <ProtectedRoute>
                 <Chats />
             </ProtectedRoute>
-    }
+    },
+
+    {
+        path: "/chat/:chatId",
+        element:
+            <ProtectedRoute>
+                <Chats />
+            </ProtectedRoute>
+    },
 ])
 
 

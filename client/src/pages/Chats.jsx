@@ -1,63 +1,117 @@
-import React from 'react'
-import { useEffect } from 'react'
-import API from '../services/api'
-import { useState } from 'react'
-import axios from 'axios'
+import React, { useState } from "react";
+import API from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const Chats = () => {
-
-    const [message, setMessage] = useState("")
-    const [response, setResponse] = useState("")
+    const [message, setMessage] = useState("");
+    const [chatId, setChatId] = useState("");
+    const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    console.log(import.meta.env.VITE_API_URL)
+    let navigate = useNavigate();
 
-    const inputMessage = (message) => {
-        setMessage(message)
-    }
+    const getResponse = async () => {
+        if (!message.trim()) return;
 
-    const getReponse = async (msg) => {
+        // User message 
+        const userMessage = {
+            role: "user",
+            content: message,
+        };
+
+        setMessages((prev) => [...prev, userMessage]);
+
+        const currentMessage = message;
+        setMessage("");
         setLoading(true);
-        setResponse("");
 
-        API.post("/chat/stream", {
-            message: msg
-        }).then((res) => {
-            const reply = res?.data?.data || res?.data?.reply || "No response received.";
-            setResponse(reply);
-        }).catch((err) => {
-            const errorMessage = err?.response?.data?.error || err?.message || "Request failed.";
-            setResponse(errorMessage);
-        }).finally(() => {
+        try {
+            const { data } = await API.post("/chat/conversation", {
+                message: currentMessage,
+                chatId,
+            });
+
+            console.log(data);
+
+            if (data.success) {
+                // after first request chatId save
+                if (!chatId) {
+                    setChatId(data.chatId);
+                }
+
+                // Assistant last message 
+                const assistantMessage = data.response.messages[data.response.messages.length - 1];
+
+                setMessages((prev) => [...prev, assistantMessage]);
+
+                
+                navigate(`/chat/${data.chatId}`)
+
+
+
+            }
+        } catch (error) {
+            console.log(error);
+
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
+                    content: "Something went wrong.",
+                },
+            ]);
+        } finally {
             setLoading(false);
-        })
-    }
-
-
-
-    console.log(response)
-
+        }
+    };
 
     return (
-        <>
-            <div>Chats</div>
-            {loading ? <h1>Loading...</h1> : <p>{response}</p>}
+        <div style={{ width: "700px", margin: "30px auto" }}>
+            <h2>FlashGPT</h2>
+
+            <div
+                style={{
+                    border: "1px solid gray",
+                    padding: "20px",
+                    height: "500px",
+                    overflowY: "auto",
+                    marginBottom: "20px",
+                }}
+            >
+                {messages.map((msg, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            marginBottom: "15px",
+                            textAlign: msg.role === "user" ? "right" : "left",
+                        }}
+                    >
+                        <b>{msg.role === "user" ? "You" : "FlashGPT"}</b>
+
+                        <p>{msg.content}</p>
+                    </div>
+                ))}
+
+                {loading && <p>Thinking...</p>}
+            </div>
 
             <input
                 type="text"
-                placeholder='Ask something...'
+                placeholder="Ask something..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                        getReponse(message);
-                        // setMessage("");
+                        getResponse();
                     }
                 }}
+                style={{
+                    width: "100%",
+                    padding: "12px",
+                }}
             />
+        </div>
+    );
+};
 
-        </>
-    )
-}
-
-export default Chats
+export default Chats;

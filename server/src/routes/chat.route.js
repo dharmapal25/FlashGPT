@@ -13,7 +13,7 @@ chatRoute.post("/chat/conversation", authVerify, setConversation)
 
 
 // api/chat/conversation/:chatId
-chatRoute.post("/chat/conversation/:chatId", authVerify, getConversation)
+chatRoute.get("/chat/conversation/:chatId", authVerify, getConversation)
 
 
 export {

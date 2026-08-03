@@ -148,12 +148,31 @@ YOUR TASKS:
 
 
 const getConversation = async (req, res) => {
+    try {
 
-    const { chatId } = req.params
+        const { chatId } = req.params;
 
-    let chatData = await Conversation.findById(chatId)
+        const chatData = await Conversation.findById(chatId);
 
-    console.log("chatData : ", chatData)
-    res.json(chatData)
-}
+        if (!chatData) {
+            return res.status(404).json({
+                success: false,
+                message: "Conversation not found",
+            });
+        }
+
+        res.json({
+            success: true,
+            messages: chatData.messages,
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
+};
 export { Chat, setConversation, getConversation };

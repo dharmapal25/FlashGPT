@@ -9,6 +9,7 @@ const Chats = () => {
 
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
+    const [titles, setTitles] = useState([]);
     const [loading, setLoading] = useState(false);
 
     // Refresh support
@@ -30,6 +31,19 @@ const Chats = () => {
     }, [chatId]);
 
 
+    // All chats
+
+    useEffect(() => {
+        API.get("/chat/all-conversation",{withCredentials : true})
+            .then((res) => {
+                console.log(res.data)
+                // setTitles(res.data)
+            }).catch((err) => {
+                console.log("ERROR", err)
+            })
+    }, [])
+
+
     // Load conversation
 
     const loadConversation = async (id) => {
@@ -39,6 +53,7 @@ const Chats = () => {
             const { data } = await API.get(`/chat/conversation/${id}`);
             if (data.success) {
                 setMessages(data.messages);
+                setTitles(data.title);
             }
 
         } catch (err) {
@@ -46,7 +61,7 @@ const Chats = () => {
         }
     };
 
-
+    console.log(titles)
 
     // -----------------------
     // Send Message
@@ -66,7 +81,7 @@ const Chats = () => {
                 chatId,
 
             });
-
+            console.log("data : ", data.response.title)
             if (data.success) {
 
                 // New chat

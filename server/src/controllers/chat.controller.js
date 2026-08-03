@@ -1,4 +1,5 @@
 import Conversation from "../models/conversation.model.js";
+import User from "../models/user.model.js";
 import AiResponse from "../utils/aireponse.js";
 
 
@@ -164,6 +165,7 @@ const getConversation = async (req, res) => {
         res.json({
             success: true,
             messages: chatData.messages,
+            title: chatData.title
         });
 
     } catch (error) {
@@ -175,4 +177,34 @@ const getConversation = async (req, res) => {
 
     }
 };
-export { Chat, setConversation, getConversation };
+
+
+const getAllConversation = async (req, res) => {
+    console.log(req.user.id)
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated",
+            });
+        }
+
+        const AllChats = await Conversation.find({ userId: req.user.id }).populate("userId")
+
+        res.json({
+            success: true,
+            chats: AllChats,
+            // title : AllChats?.title
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong with AI chat",
+            error: err.message,
+        });
+    }
+}
+
+
+export { Chat, setConversation, getConversation, getAllConversation };

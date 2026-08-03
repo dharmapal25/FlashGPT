@@ -1,5 +1,5 @@
 import express from "express";
-import { Chat, getConversation, setConversation } from "../controllers/chat.controller.js";
+import { Chat, getAllConversation, getConversation, setConversation } from "../controllers/chat.controller.js";
 import authVerify from "../middleware/authToken.middleware.js";
 
 const chatRoute = express.Router();
@@ -15,6 +15,9 @@ chatRoute.post("/chat/conversation", authVerify, setConversation)
 // api/chat/conversation/:chatId
 chatRoute.get("/chat/conversation/:chatId", authVerify, getConversation)
 
+
+// api/chat/all-conversation
+chatRoute.get("/chat/all-conversation", authVerify, getAllConversation)
 
 export {
     chatRoute

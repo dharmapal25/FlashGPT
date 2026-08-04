@@ -9,11 +9,8 @@ const Login = () => {
 
     const LoginGoogle = () => {
         // Redirect to Backend Google Auth URL
-<<<<<<< HEAD
         window.location.href = `https://flashpilot.onrender.com/api/auth/google`;
-=======
-        window.location.href = `${API}/auth/google`;
->>>>>>> 79e87260eeb6361bec11b60d4f4973fdd32a37f2
+        // window.location.href = `${API}/auth/google`;
     };
 
     return (

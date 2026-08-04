@@ -1,14 +1,15 @@
 import React from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from 'react-router-dom';
-import '../App.css'; 
+import API from "../services/api"
+import '../App.css';
 
 const Login = () => {
     const navigate = useNavigate();
 
     const LoginGoogle = () => {
         // Redirect to Backend Google Auth URL
-        window.location.href = "http://localhost:5000/api/auth/google";
+        window.location.href = `https://flashpilot.onrender.com/api/auth/google`;
     };
 
     return (

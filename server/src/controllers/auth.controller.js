@@ -16,8 +16,11 @@ export const googleCallback = (req, res) => {
     }
   );
 
+
   res.cookie("token", token, {
     httpOnly: true,
+    secure: true,
+    sameSite: "None",
   });
 
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
@@ -43,7 +46,7 @@ export const profile = async (req, res) => {
     res.json({
       success: true,
       user: userData,
-      TotalChats 
+      TotalChats
     });
 
 

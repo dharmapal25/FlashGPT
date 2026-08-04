@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import API from '../services/api';
-import './Profile.css';
+import '../style/Profile.css';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {

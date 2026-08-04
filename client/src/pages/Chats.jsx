@@ -7,8 +7,9 @@ import { FiMessageSquare } from "react-icons/fi";
 import { HiOutlineMenu } from "react-icons/hi";
 import { BiCommentAdd, BiPlus } from "react-icons/bi";
 import { IoIosSend } from "react-icons/io";
-import "./Chats.css";
+import "../style/Chats.css";
 import { useAuth } from "../context/AuthContext";
+import Multimodels from "../components/Multimodels";
 
 const Chats = () => {
     const navigate = useNavigate();
@@ -74,6 +75,7 @@ const Chats = () => {
             const { data } = await API.post("/chat/conversation", {
                 message: currentMessage,
                 chatId,
+                model : localStorage.getItem("model")
             });
 
             if (data.success) {
@@ -160,7 +162,8 @@ const Chats = () => {
             {/* Chat Area */}
             <main className="chat-viewport">
                 <header className="chat-header">
-                    <h2>FlashGPT</h2>
+                    {/* <h2>FlashGPT</h2> */}
+                    <Multimodels />
                 </header>
 
                 <div className="messages-container">
@@ -169,7 +172,6 @@ const Chats = () => {
                             <h3>What can I help with today?</h3>
                         </div>
                     )}
-
                     {messages.map((msg, index) => (
                         <div
                             key={index}
@@ -202,7 +204,7 @@ const Chats = () => {
                     <div className="input-box">
                         <input
                             type="text"
-                            placeholder="Message FlashGPT..."
+                            placeholder="Message Flashpilot..."
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             onKeyDown={(e) => {

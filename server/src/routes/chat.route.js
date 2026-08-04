@@ -4,6 +4,7 @@ import authVerify from "../middleware/authToken.middleware.js";
 
 const chatRoute = express.Router();
 
+// test route
 // api/chat/stream
 chatRoute.post("/chat/stream", Chat);
 

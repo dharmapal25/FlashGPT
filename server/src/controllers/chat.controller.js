@@ -1,11 +1,12 @@
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
 import AiResponse from "../utils/aireponse.js";
+import chooseModel from "../utils/setModel.js";
 
 
 const Chat = async (req, res) => {
     try {
-        const { message } = req.body;
+        const { message, model } = req.body;
 
         if (!message || message.trim() === "") {
             return res.status(400).json({
@@ -13,8 +14,9 @@ const Chat = async (req, res) => {
                 error: "Message is required.",
             });
         }
-
-        const response = await AiResponse(message);
+        // model = 
+        let aiModel = chooseModel(model)
+        const response = await AiResponse(message, aiModel);
 
         return res.status(200).json({
             success: true,
@@ -45,7 +47,7 @@ const setConversation = async (req, res) => {
             });
         }
 
-        const { message, chatId } = req.body;
+        const { message, chatId, model } = req.body;
 
         if (!message) {
             return res.status(400).json({
@@ -68,7 +70,7 @@ const setConversation = async (req, res) => {
         }
 
         const prompt = `
-You are FlashGPT, a smart and friendly AI assistant.
+You are Flashpilot, a smart and friendly AI assistant.
 CONTEXT:
 - Previous Conversation: ${history || "None"}
 - User's current Message: ${message}
@@ -77,12 +79,13 @@ YOUR TASKS:
    At the very end, add one short follow-up suggestion (e.g., "Want me to show a real example?" or "Should I explain X next?")
 `;
 
-        const response = await AiResponse(prompt);
+        let aiModel = chooseModel(model)
+        const response = await AiResponse(prompt, aiModel);
+
         let queryResponse = response || "No response";
 
 
         const userId = req.user.id;
-        console.log("response : ", response)
         let chat;
 
         // If chatId is provided, update the existing chat, otherwise create a new one

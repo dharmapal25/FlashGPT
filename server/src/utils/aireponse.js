@@ -1,9 +1,11 @@
 import env from "../config/env.js";
 import groq from "../config/groq.js";
+import chooseModel from "./setModel.js";
 
-const AiResponse = async (message) => {
+const AiResponse = async (message, aiModel) => {
+    
     const response = await groq.chat.completions.create({
-        model: env.GROQ_AI_MODEL_1,
+        model: aiModel || env.OPENAI_MODEL,
         messages: [
             {
                 role: "user",
@@ -11,7 +13,7 @@ const AiResponse = async (message) => {
             },
         ],
         //   temperature: 0.7,  // creative answer 0, 0.2 .... 0.7, 1.0 +
-        max_tokens: Number(env.GROQ_AI_CONTEXT_WINDOW )
+        max_tokens: Number(env.GROQ_AI_CONTEXT_WINDOW)
     });
 
     return response.choices[0].message.content;

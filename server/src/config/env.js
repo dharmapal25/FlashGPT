@@ -12,11 +12,14 @@ const env = {
 
     // Services & LLM APIs
     GROQ_API_KEY: process.env.GROQ_API_KEY,
-    GROQ_AI_MODEL_1: process.env.GROQ_AI_MODEL_1,
-    GROQ_AI_MODEL_2: process.env.GROQ_AI_MODEL_2,
 
-    GROQ_AI_MODEL_3: process.env.GROQ_AI_MODEL_3,
-    GROQ_AI_MODEL_4: process.env.GROQ_AI_MODEL_4,
+    GROQAI_MODEL: process.env.GROQAI_MODEL,
+    OPENAI_MODEL: process.env.OPENAI_MODEL,
+
+    LLAMA_MODEL: process.env.LLAMA_MODEL,
+    DEEPSEEK_MODEL: process.env.DEEPSEEK_MODEL,
+    OPENAI_MODEL_MINI: process.env.OPENAI_MODEL_MINI,
+    QWEN_MODEL: process.env.QWEN_MODEL,
 
     GROQ_AI_CONTEXT_WINDOW : process.env.GROQ_AI_CONTEXT_WINDOW,
 

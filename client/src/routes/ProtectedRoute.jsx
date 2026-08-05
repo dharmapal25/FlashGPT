@@ -6,7 +6,13 @@ const ProtectedRoute = ({ children }) => {
     const { user, loading, error } = useAuth()
 
     if (loading) {
-        return <h2>Loading...</h2>;
+        return <>
+        <div className="loading-box">
+            <div className="load">
+                <div className="load-dot"></div>
+            </div>
+        </div>
+        </>;
     }
 
     if (!user) {

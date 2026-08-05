@@ -140,7 +140,7 @@ YOUR TASKS:
         });
 
     } catch (error) {
-        console.error("Groq Error:", error);
+        // console.error("Groq Error:", error.message);
 
         res.status(500).json({
             success: false,

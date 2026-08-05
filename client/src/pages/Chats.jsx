@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import API from "../services/api";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { data, Link, useNavigate, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FiMessageSquare } from "react-icons/fi";
@@ -28,7 +28,7 @@ const Chats = () => {
     const messagesEndRef = useRef(null);
 
     function closeError() {
-        setCloseErrorBar(true)
+        setCloseErrorBar(!closeErrorBar)
     }
 
     const loadAllChats = async () => {
@@ -38,7 +38,16 @@ const Chats = () => {
                 setTitles(data.chats);
             }
         } catch (err) {
-            console.log(err);
+            setCloseErrorBar(true)
+            if (err.response) {
+                setError(err.response.data.message || "Server error");
+            }
+            else if (err.request) {
+                setError("Server is not responding");
+            }
+            else {
+                setError(err.message || "Something went wrong");
+            }
         }
     };
 
@@ -54,10 +63,12 @@ const Chats = () => {
             setCloseErrorBar(true)
             if (err.response) {
                 setError(err.response.data.message || "Server error");
-            } else if (err.request) {
-                setError("Network error. Please check your internet connection.");
-            } else {
-                setError("Unable to get AI response. Please try again.");
+            }
+            else if (err.request) {
+                setError("Server is not responding");
+            }
+            else {
+                setError(err.message || "Something went wrong");
             }
         }
     };
@@ -99,10 +110,12 @@ const Chats = () => {
             setCloseErrorBar(true)
             if (err.response) {
                 setError(err.response.data.message || "Server error");
-            } else if (err.request) {
-                setError("Network error. Please check your internet connection.");
-            } else {
-                setError("Unable to get AI response. Please try again.");
+            }
+            else if (err.request) {
+                setError("Server is not responding");
+            }
+            else {
+                setError(err.message || "Something went wrong");
             }
 
         } finally {
@@ -189,12 +202,12 @@ const Chats = () => {
 
                 <div className="messages-container">
 
-                    {/* {error &&  */}
-                    <div className={`error-message ${(closeErrorBar) ? "error-box" : ""} `} >
-                        <p>Some thing{error}</p>
-                        <button onClick={closeError} ><BiX size={20} fill="#ccc" style={{ cursor: "pointer" }} /></button>
-                    </div>
-                    {/* } */}
+                    {error &&
+                        <div className={`error-message ${(!closeErrorBar) ? "error-box" : ""} `} >
+                            <p>{error}</p>
+                            <button onClick={closeError} ><BiX size={20} fill="#ccc" style={{ cursor: "pointer" }} /></button>
+                        </div>
+                    }
 
                     {messages.length === 0 && !loading && (
                         <div className="empty-state">
@@ -218,7 +231,6 @@ const Chats = () => {
 
                     {loading && (
                         <div className="message-row ai-row">
-                            {/* <div className="message-avatar">⚡</div> */}
                             <div className="message-bubble loading-bubble">
                                 <span className="typing-dot"></span>
                                 <span className="typing-dot"></span>

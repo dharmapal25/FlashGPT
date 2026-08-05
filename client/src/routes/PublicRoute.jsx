@@ -5,7 +5,13 @@ const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <>
+      <div className="loading-box">
+        <div className="load">
+          <div className="load-dot"></div>
+        </div>
+      </div>
+    </>;
   }
 
   if (user) {

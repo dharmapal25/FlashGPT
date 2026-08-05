@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FiMessageSquare } from "react-icons/fi";
 import { HiOutlineMenu } from "react-icons/hi";
-import { BiCommentAdd, BiPlus } from "react-icons/bi";
+import { BiCommentAdd, BiPlus, BiX } from "react-icons/bi";
 import { IoIosSend } from "react-icons/io";
 import "../style/Chats.css";
 import { useAuth } from "../context/AuthContext";
@@ -21,9 +21,15 @@ const Chats = () => {
     const [messages, setMessages] = useState([]);
     const [titles, setTitles] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [closeErrorBar, setCloseErrorBar] = useState(false);
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const messagesEndRef = useRef(null);
+
+    function closeError() {
+        setCloseErrorBar(true)
+    }
 
     const loadAllChats = async () => {
         try {
@@ -45,7 +51,14 @@ const Chats = () => {
                 navigate(`/chat/${id}`);
             }
         } catch (err) {
-            console.log(err);
+            setCloseErrorBar(true)
+            if (err.response) {
+                setError(err.response.data.message || "Server error");
+            } else if (err.request) {
+                setError("Network error. Please check your internet connection.");
+            } else {
+                setError("Unable to get AI response. Please try again.");
+            }
         }
     };
 
@@ -75,7 +88,7 @@ const Chats = () => {
             const { data } = await API.post("/chat/conversation", {
                 message: currentMessage,
                 chatId,
-                model : localStorage.getItem("model")
+                model: localStorage.getItem("model")
             });
 
             if (data.success) {
@@ -83,7 +96,15 @@ const Chats = () => {
                 await loadConversation(data.chatId);
             }
         } catch (err) {
-            console.log(err);
+            setCloseErrorBar(true)
+            if (err.response) {
+                setError(err.response.data.message || "Server error");
+            } else if (err.request) {
+                setError("Network error. Please check your internet connection.");
+            } else {
+                setError("Unable to get AI response. Please try again.");
+            }
+
         } finally {
             setLoading(false);
         }
@@ -167,6 +188,14 @@ const Chats = () => {
                 </header>
 
                 <div className="messages-container">
+
+                    {/* {error &&  */}
+                    <div className={`error-message ${(closeErrorBar) ? "error-box" : ""} `} >
+                        <p>Some thing{error}</p>
+                        <button onClick={closeError} ><BiX size={20} fill="#ccc" style={{ cursor: "pointer" }} /></button>
+                    </div>
+                    {/* } */}
+
                     {messages.length === 0 && !loading && (
                         <div className="empty-state">
                             <h3>What can I help with today?</h3>

@@ -362,6 +362,37 @@ body {
     animation: typing 1.4s infinite ease-in-out;
 }
 
+.error-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-left: 2px solid #ebe3e5;
+    color: #ccc;
+    border-radius: 5px 0 0 5px;
+    background: #b0002071;
+    position: absolute;
+    right: 10%;
+    box-shadow: 0px 0px 20px 2px #b80a0a96;
+    /* width: 10%; */
+
+    p {
+        width: 100%;
+    }
+
+    button {
+        padding-left: 10% ;
+        background: none;
+        border: none;
+        outline: none;
+    }
+
+}
+
+.error-box {
+    display: none;
+}
+
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
@@ -373,9 +404,9 @@ body {
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
     .sidebar.closed {
-        width: 0;
         border-right: none;
     }
+    
     .message-row {
         padding: 12px 16px;
     }

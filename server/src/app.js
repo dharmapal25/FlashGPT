@@ -6,6 +6,7 @@ import { chatRoute } from "./routes/chat.route.js";
 import authRoutes from "./routes/auth.routes.js";
 import passport from "passport";
 import connectDB from "./config/mongo.js";
+import { aiLimiter, apiLimiter } from "./middleware/rateLimiter.middleware.js";
 
 
 const app = express();
@@ -23,9 +24,9 @@ app.use(passport.initialize());
 
 connectDB();
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth",apiLimiter, authRoutes);
 
-app.use('/api', chatRoute)
+app.use('/api',aiLimiter , chatRoute)
 
 
 

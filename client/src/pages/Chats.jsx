@@ -164,8 +164,9 @@ const Chats = () => {
                         {titles.map((chat) => (
                             <div
                                 key={chat._id}
+
                                 className={`chat-item ${chat._id === chatId ? "active" : ""}`}
-                                onClick={() => loadConversation(chat._id)}
+                                onClick={() => {loadConversation(chat._id); setIsSidebarOpen(!isSidebarOpen)}}
                             >
                                 <span className="chat-icon"><FiMessageSquare /></span>
                                 <span className="chat-title-text">{chat.title || "Untitled Chat"}</span>
@@ -196,8 +197,39 @@ const Chats = () => {
             {/* Chat Area */}
             <main className="chat-viewport">
                 <header className="chat-header">
-                    {/* <h2>FlashGPT</h2> */}
+                    <div className="mobile-model">
                     <Multimodels />
+                    </div>
+
+                    <div className="menu-models mobile-mode">
+
+                        <div className="left-menu">
+                            <button
+                                className="toggle-sidebar-btn"
+                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+                            >
+                                <HiOutlineMenu size={22} />
+                            </button>
+
+
+                            <button className="btn" onClick={newChat}>
+                                <BiCommentAdd size={23} />
+                            </button>
+                            <Multimodels />
+                        </div>
+
+                        <div className="right-menu">
+                            <Link to={"/profile"} >
+                                {localStorage.getItem("image") && <img src={localStorage.getItem("image")} className="default" /> || <img src="qw.jpg" alt="deafult" className="default" />}
+                            </Link>
+
+                        </div>
+
+                    </div>
+
+
+
                 </header>
 
                 <div className="messages-container">

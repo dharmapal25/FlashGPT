@@ -260,7 +260,7 @@ body {
 }
 
 .markdown-body pre {
-    background-color: #171717;
+    background-color: #3c3c3cbd;
     padding: 12px;
     border-radius: 8px;
     overflow-x: auto;

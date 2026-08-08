@@ -8,6 +8,12 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import PublicRoute from './routes/PublicRoute.jsx'
 import Profile from './pages/Profile.jsx'
 
+import { registerSW } from 'virtual:pwa-register'
+
+// This actually activates the service worker.
+// { immediate: true } means: register it as soon as the app loads
+registerSW({ immediate: true })
+
 
 const routers = createBrowserRouter([
     {

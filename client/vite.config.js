@@ -1,7 +1,61 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [
+    react(),
+
+    // Auto-generates manifest.json and service worker
+    VitePWA({
+      // Automatically update the service worker when a new version is deployed
+      registerType: "autoUpdate",
+
+      manifest: {
+        name: "Flashpilot - Ai chat App",
+        short_name: "Notes",
+        description: "Offline Flashpilot web app",
+
+        start_url: "/",
+        scope: "/",
+
+        // App opens without browser address bar
+        display: "standalone",
+
+        orientation: "portrait",
+
+        // Mobile status bar / browser UI color
+        theme_color: "#c2c2c2a1",
+
+        // Splash screen background
+        background_color: "#1d1d1d",
+
+        icons: [
+          {
+            src: "logo.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "logo.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
+      },
+
+      // Workbox generates the service worker
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png,svg}"],
+      },
+
+      // Allows PWA testing during development
+      devOptions: {
+        enabled: true,
+      },
+    }),
+  ],
+});
+

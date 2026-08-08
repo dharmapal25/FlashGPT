@@ -13,10 +13,10 @@ export default defineConfig({
 
       manifest: {
         name: "Flashpilot - Ai chat App",
-        short_name: "Notes",
+        short_name: "Flashpilot",
         description: "Offline Flashpilot web app",
 
-        start_url: "/",
+        start_url: "/chat",
         scope: "/",
 
         // App opens without browser address bar

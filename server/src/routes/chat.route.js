@@ -1,5 +1,5 @@
 import express from "express";
-import { Chat, getAllConversation, getConversation, setConversation } from "../controllers/chat.controller.js";
+import { Chat, getAllConversation, getConversation, setConversation, deleteConversation } from "../controllers/chat.controller.js";
 import authVerify from "../middleware/authToken.middleware.js";
 
 const chatRoute = express.Router();
@@ -15,6 +15,10 @@ chatRoute.post("/chat/conversation", authVerify, setConversation)
 
 // api/chat/conversation/:chatId
 chatRoute.get("/chat/conversation/:chatId", authVerify, getConversation)
+
+
+// api/chat/conversation/:chatId
+chatRoute.delete("/chat/conversation/:chatId", authVerify, deleteConversation)
 
 
 // api/chat/all-conversation

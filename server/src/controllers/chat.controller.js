@@ -182,6 +182,37 @@ const getConversation = async (req, res) => {
 };
 
 
+const deleteConversation = async (req, res) => {
+
+    try {
+
+        const chatId = req.params.id;
+
+        const deletedUser = await Conversation.findByIdAndDelete(chatId);
+
+        if (!deletedUser) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `User with ID ${chatId} deleted.`
+        });
+
+        
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+            error: err.message,
+        });
+    }
+}
+
+
 const getAllConversation = async (req, res) => {
     console.log(req.user.id)
     try {
@@ -211,4 +242,4 @@ const getAllConversation = async (req, res) => {
 }
 
 
-export { Chat, setConversation, getConversation, getAllConversation };
+export { Chat, setConversation, getConversation, getAllConversation, deleteConversation };

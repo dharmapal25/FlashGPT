@@ -175,7 +175,7 @@ const Chats = () => {
                     </div>
                 )}
 
-                {/* Profile Section at Bottom Left */}
+                {/* Profile Section */}
                 <div className="sidebar-footer">
                     <Link to={"/profile"} >
                         <div className="user-profile">

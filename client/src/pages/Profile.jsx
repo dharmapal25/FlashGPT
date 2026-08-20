@@ -42,7 +42,7 @@ const Profile = () => {
     }, []);
 
     // Total Chats Array / 2 Calculation
-    const totalChatsCount = user?.TotalChats ? Math.floor(user.TotalChats.length / 2) : 0;
+    const totalChatsCount = user?.TotalChats ? Math.floor(user.TotalChats.length) : 0;
     const userData = user?.user;
 
     localStorage.setItem("image",userData?.profilePicture)

@@ -8,7 +8,7 @@ const Multimodels = () => {
     );
     const dropdownRef = useRef(null);
 
-    const modelsList = ["OpenAi-gpt", "llama 3.3", "deepseek-r1", "qwen3.6"];
+    const modelsList = ["OpenAi", "llama 3.3", "deepseek-r1", "qwen3.6"];
 
     function handleSelectModel(modelName) {
         setSelectedModel(modelName);

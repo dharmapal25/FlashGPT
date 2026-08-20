@@ -127,6 +127,7 @@ const Chats = () => {
     const newChat = () => {
         setMessages([]);
         setMessage("");
+        setError(null);
         navigate("/chat");
     };
 
@@ -178,8 +179,10 @@ const Chats = () => {
                                 <AiOutlineDelete
                                     onClick={() => {
                                         API.delete(`/chat/conversation/${chat._id}`)
-                                            .then((res) => {
-                                                alert(res.data.message);
+                                        .then((res) => {
+                                                newChat();
+                                                // alert(res.data.message);
+                                                loadAllChats();
                                             })
                                             .catch((err) => {
                                                 console.error(err);

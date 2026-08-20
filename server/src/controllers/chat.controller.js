@@ -58,11 +58,12 @@ const setConversation = async (req, res) => {
 
 
         let history = "";
+        const isFirstMessage = !chatId;
 
         if (chatId) {
             const existingChat = await Conversation.findById(chatId);
 
-            if (existingChat) {
+            if (existingChat && existingChat.messages?.length > 0) {
                 history = existingChat.messages
                     .map((msg) => `${msg.role}: ${msg.content}`)
                     .join("\n");
@@ -71,18 +72,37 @@ const setConversation = async (req, res) => {
 
         const prompt = `
 You are Flashpilot, a smart and friendly AI assistant.
+
 CONTEXT:
 - Previous Conversation: ${history || "None"}
-- User's current Message: ${message}
-YOUR TASKS:
-1. ANSWER: Respond to the user's message clearly. Use markdown for code, lists, etc. 
-   At the very end, add one short follow-up suggestion (e.g., "Want me to show a real example?" or "Should I explain X next?")
+- User's Current Message: ${message}
+
+TASKS:
+1. Respond to the user's message clearly using Markdown for code, lists, and bold text.
+2. End your message with a single, relevant follow-up suggestion.
+3. ${!history
+                ? "Generate a short, simple unique title summarizing the user's message in 5 to 7 words."
+                : "Do not generate a title; set title to null."
+            }
+
+OUTPUT FORMAT:
+Return strictly a valid JSON object with the following schema:
+{
+  "title": ${!history ? '"2-4 unique word title here"' : "null"},
+  "message": "Your markdown formatted response here"
+}
 `;
 
         let aiModel = chooseModel(model)
         const response = await AiResponse(prompt, aiModel);
+        console.log("Response : ", response);
 
-        let queryResponse = response || "No response";
+        const parsedResponse = JSON.parse(response);
+        console.log( "response title: ", parsedResponse?.title);
+
+
+        // let queryResponse = response || "No response";
+        let queryResponse = parsedResponse || "No response";
 
 
         const userId = req.user.id;
@@ -102,7 +122,7 @@ YOUR TASKS:
                             },
                             {
                                 role: "assistant",
-                                content: queryResponse,
+                                content: queryResponse?.message,
                             },
                         ],
                     },
@@ -111,14 +131,17 @@ YOUR TASKS:
             );
         }
 
-        if (!chat) {
+        console.log("queryResponse : ",queryResponse)
 
+        if (!chat) {
             // new chat
             chat = await Conversation.create({
                 userId,
                 title:
-                    message.substring(0, 50) +
-                    (message.length > 50 ? "..." : ""),
+                    // message.substring(0, 50) +
+                    // (message.length > 50 ? "..." : ""),
+                    
+                    queryResponse?.title,
 
                 messages: [
                     {
@@ -127,7 +150,7 @@ YOUR TASKS:
                     },
                     {
                         role: "assistant",
-                        content: queryResponse,
+                        content: queryResponse?.message,
                     },
                 ],
             });

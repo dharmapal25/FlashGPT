@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { FiMessageSquare } from "react-icons/fi";
 import { HiOutlineMenu } from "react-icons/hi";
 import { BiCommentAdd, BiPlus, BiX } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
 import { IoIosSend } from "react-icons/io";
 import "../style/Chats.css";
 import { useAuth } from "../context/AuthContext";
@@ -16,7 +17,7 @@ const Chats = () => {
     const { chatId } = useParams();
 
     let { user } = useAuth()
-    console.log(user)
+    // console.log(user)
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const [titles, setTitles] = useState([]);
@@ -166,10 +167,26 @@ const Chats = () => {
                                 key={chat._id}
 
                                 className={`chat-item ${chat._id === chatId ? "active" : ""}`}
-                                onClick={() => {loadConversation(chat._id); setIsSidebarOpen(!isSidebarOpen)}}
+                                onClick={() => {
+                                    loadConversation(chat._id);
+                                    //  setIsSidebarOpen(!isSidebarOpen); 
+                                    console.log(chat._id)
+                                }}
                             >
-                                <span className="chat-icon"><FiMessageSquare /></span>
+                                {/* <span className="chat-icon"><FiMessageSquare /></span> */}
                                 <span className="chat-title-text">{chat.title || "Untitled Chat"}</span>
+                                <AiOutlineDelete
+                                    onClick={() => {
+                                        API.delete(`/chat/conversation/${chat._id}`)
+                                            .then((res) => {
+                                                alert(res.data.message);
+                                            })
+                                            .catch((err) => {
+                                                console.error(err);
+                                                alert(err.response?.data?.message || "Failed to delete");
+                                            });
+                                    }}
+                                />
                             </div>
                         ))}
                     </div>
@@ -198,7 +215,7 @@ const Chats = () => {
             <main className="chat-viewport">
                 <header className="chat-header">
                     <div className="mobile-model">
-                    <Multimodels />
+                        <Multimodels />
                     </div>
 
                     <div className="menu-models mobile-mode">

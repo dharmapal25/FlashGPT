@@ -186,7 +186,8 @@ const deleteConversation = async (req, res) => {
 
     try {
 
-        const chatId = req.params.id;
+        const chatId = req.params.chatId;
+        console.log("chatId : ", req.params)
 
         const deletedUser = await Conversation.findByIdAndDelete(chatId);
 
@@ -202,7 +203,7 @@ const deleteConversation = async (req, res) => {
             message: `User with ID ${chatId} deleted.`
         });
 
-        
+
     } catch (err) {
         res.status(500).json({
             success: false,

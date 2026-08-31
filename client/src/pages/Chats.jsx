@@ -166,7 +166,7 @@ const Chats = () => {
                         {titles.map((chat) => (
                             <div
                                 key={chat._id}
-
+                                title={chat.title}
                                 className={`chat-item ${chat._id === chatId ? "active" : ""}`}
                                 onClick={() => {
                                     loadConversation(chat._id);
@@ -179,7 +179,7 @@ const Chats = () => {
                                 <AiOutlineDelete
                                     onClick={() => {
                                         API.delete(`/chat/conversation/${chat._id}`)
-                                        .then((res) => {
+                                            .then((res) => {
                                                 newChat();
                                                 // alert(res.data.message);
                                                 loadAllChats();

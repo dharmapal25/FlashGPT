@@ -6,6 +6,7 @@ import { HiOutlineMenu } from "react-icons/hi";
 import { BiCommentAdd, BiPlus, BiX } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { IoIosSend } from "react-icons/io";
+import gsap from "gsap";
 import "../style/Chats.css";
 import Multimodels from "../components/Multimodels";
 import { useChats } from "../context/chatsContext";
@@ -30,9 +31,17 @@ const Chats = () => {
     } = useChats();
 
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (messagesContainerRef.current) {
+            // Smooth scroll using GSAP
+            gsap.to(messagesContainerRef.current, {
+                scrollTop: messagesContainerRef.current.scrollHeight,
+                duration: 0.6,
+                ease: "power2.inOut"
+            });
+        }
     }, [messages, loading]);
 
     // console.log("Messages : ",messages,message)

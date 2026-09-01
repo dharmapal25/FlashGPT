@@ -10,11 +10,19 @@ import Profile from './pages/Profile.jsx'
 
 import { registerSW } from 'virtual:pwa-register'
 import { ChatsProvider } from './context/chatsContext.jsx'
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// // Set GSAP defaults for smooth scrolling
+// gsap.defaults({
+//     ease: "power2.inOut"
+// });
 
 // This actually activates the service worker.
 // { immediate: true } means: register it as soon as the app loads
 registerSW({ immediate: true })
-
 
 const routers = createBrowserRouter([
     {

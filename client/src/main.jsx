@@ -9,6 +9,7 @@ import PublicRoute from './routes/PublicRoute.jsx'
 import Profile from './pages/Profile.jsx'
 
 import { registerSW } from 'virtual:pwa-register'
+import { ChatsProvider } from './context/chatsContext.jsx'
 
 // This actually activates the service worker.
 // { immediate: true } means: register it as soon as the app loads
@@ -41,7 +42,9 @@ const routers = createBrowserRouter([
         path: "/chat",
         element:
             <ProtectedRoute>
-                <Chats />
+                <ChatsProvider>
+                    <Chats />
+                </ChatsProvider>
             </ProtectedRoute>
     },
 
@@ -49,7 +52,9 @@ const routers = createBrowserRouter([
         path: "/chat/:chatId",
         element:
             <ProtectedRoute>
-                <Chats />
+                <ChatsProvider>
+                    <Chats />
+                </ChatsProvider>
             </ProtectedRoute>
     },
 ])

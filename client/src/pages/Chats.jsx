@@ -35,6 +35,8 @@ const Chats = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, loading]);
 
+    // console.log("Messages : ",messages,message)
+
     return (
         <div className="main-container">
             {/* Sidebar */}
@@ -150,6 +152,7 @@ const Chats = () => {
                     )}
 
                     {messages.map((msg, index) => (
+                        
                         <div
                             key={index}
                             className={`message-row ${msg.role === "user" ? "user-row" : "ai-row"}`}

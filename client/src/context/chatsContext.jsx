@@ -66,8 +66,11 @@ export const ChatsProvider = ({ children }) => {
     // Send message and get AI response
     const getResponse = async () => {
         if (!message.trim()) return;
+
         const currentMessage = message;
         setMessage("");
+
+        setMessages((prev) => [...prev, { role: "user", content: currentMessage }]);
         setLoading(true);
 
         try {
